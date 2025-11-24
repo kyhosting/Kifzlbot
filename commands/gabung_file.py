@@ -45,13 +45,13 @@ async def gabung_file_collect(update: Update, context: ContextTypes.DEFAULT_TYPE
             if os.path.exists(filepath['path']):
                 os.remove(filepath['path'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if update.message.text == "✅ SELESAI ✅":
         if len(context.user_data.get('merge_files', [])) < 2:
-            await update.message.reply_text("""```\n❌ Minimal 2 file untuk digabung!\n```", parse_mode="Markdown")
+            await update.message.reply_text("```\n❌ Minimal 2 file untuk digabung!\n```", parse_mode="Markdown")
             return ASK_FILES
         
         cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
@@ -72,13 +72,13 @@ Masukkan nama file hasil gabungan
         return ASK_FILENAME
     
     if not update.message.document:
-        await update.message.reply_text("""```\n❌ Kirim file .txt atau .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Kirim file .txt atau .vcf!\n```", parse_mode="Markdown")
         return ASK_FILES
     
     filename = update.message.document.file_name
     
     if not (filename.endswith('.txt') or filename.endswith('.vcf')):
-        await update.message.reply_text("""```\n❌ File harus .txt atau .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ File harus .txt atau .vcf!\n```", parse_mode="Markdown")
         return ASK_FILES
     
     file_type = 'txt' if filename.endswith('.txt') else 'vcf'
@@ -108,7 +108,7 @@ async def gabung_file_merge(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if os.path.exists(filepath['path']):
                 os.remove(filepath['path'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
