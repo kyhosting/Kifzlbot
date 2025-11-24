@@ -1,113 +1,106 @@
 # KIFZL DEV BOT
 
 ## Overview
-Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, converter tools (TXT/VCF/XLSX), split system, dan fitur Create Admin & Navy.
 
-## Owner Configuration
-- Owner ID: 8317563450
-- Owner Username: @KIFZLDEV
-- VIP Groups (auto-grant VIP 1 minggu):
-  - https://t.me/agentviber12
-  - https://t.me/channelviber
-
-## Project Structure
-```
-/KIFZL_DEV_BOT
-├── main.py                    # Entry point
-├── requirements.txt           # Dependencies
-├── users.json                 # Auto-created: User database
-├── redeem.json               # Auto-created: Redeem codes (VIP only)
-├── sessions.json             # Auto-created: Session tracking
-├── admins.json               # Auto-created: Admin data
-├── project_banner.png        # KIFZL PROJECT banner
-└── commands/                 # Modular command handlers
-    ├── vip_system.py         # Role authorization system
-    ├── start.py              # Start command with user status
-    ├── menu.py               # Main menu keyboard
-    ├── msg_to_txt.py         # MSG to TXT converter
-    ├── rapikan_txt.py        # Clean TXT files
-    ├── convert_txt_vcf.py    # TXT to VCF converter
-    ├── convert_vcf_txt.py    # VCF to TXT extractor
-    ├── convert_xlsx_vcf.py   # Excel to VCF converter
-    ├── hitung_kontak.py      # Count contacts
-    ├── cek_nama_kontak.py    # Check contact names
-    ├── gabung_file.py        # Merge files (TXT/VCF)
-    ├── split_file.py         # Split files (per kontak/bagian)
-    ├── create_admin_navy.py  # Create Admin & Navy (3 modes)
-    ├── redeem.py             # Redeem code system (VIP only, single-use)
-    ├── redeem_utils.py       # Redeem helpers (random code, duration format)
-    ├── upgradeprem.py        # Premium upgrade with inline buttons
-    ├── aksesvip.py           # VIP access information
-    ├── menu_owner.py         # Owner management panel
-    └── expiry_checker.py     # Expiry notifications for access & codes
-```
-
-## Features
-### Role System
-- **FREE**: Limited access
-- **VIP**: Partial features (7 days default)
-- **PREMIUM**: All features (1/7/30 days packages)
-- **OWNER**: Unlimited access + management
-
-### Converter Tools
-- MSG → TXT
-- TXT → VCF (with custom naming)
-- VCF → TXT (extract phone numbers)
-- XLSX → VCF (Excel to contacts)
-
-### File Management
-- Rapikan TXT (clean formatting)
-- Gabung File (merge multiple files)
-- Split File (per kontak atau per bagian)
-- Hitung Kontak (count contacts)
-- Cek Nama Kontak (check contact names)
-
-### Admin & Navy Creator (3 Modes)
-- **Mode A - Guided**: Step-by-step input
-- **Mode B - Auto Parse**: Block text parsing
-- **Mode C - Minimal**: Single number input
-
-### Premium System
-- Inline quantity controller [-] [+]
-- Paket: 1 Day, 7 Days, 30 Days
-- Checkout with owner confirmation
-
-### Redeem System (VIP ONLY - GRATIS)
-- **Code Generation**: Random (12-char alphanumeric) or Custom input
-- **Code Expiry**: Owner set berapa hari kode berlaku (dengan jam:menit detail)
-- **User Duration**: Terpisah durasi akses VIP user (dalam format readable: hari/bulan/tahun)
-- **Single-Use**: Setiap kode hanya bisa dipakai 1x, tidak bisa ulang
-- **Validation**: Check code expired, used status, dan tampilkan alasan jelas ke user
-- **Note**: PREMIUM hanya bisa dibeli paket, tidak ada redeem code untuk PREMIUM
-
-### Owner Panel
-- View all users
-- Add/Edit user roles
-- Create redeem codes
-- View statistics
-
-## Recent Changes
-- 2024-11-24: Initial project setup
-- All features implemented with keyboard button navigation
-- Modular architecture for easy maintenance
-- Auto-create JSON files on first run
-- Session tracking functions implemented
-- 2024-11-24: Optimized file delivery speed (10x faster)
-  - File uploads now send INSTANTLY with plain text captions
-  - Banner only on text/menu responses, excluded from file uploads
-- 2024-11-24: Enhanced Redeem System (VIP ONLY - GRATIS)
-  - **Random/Custom Code**: Owner bisa pilih 🎲 RANDOM (auto-generate) atau ✍️ CUSTOM
-  - **Code Expiry with Time**: Kode berlaku X hari dengan jam:menit detail (format: DD-MM-YYYY HH:MM:SS)
-  - **Duration Display**: Tampilkan durasi VIP dalam format readable (hari/bulan/tahun)
-  - **Single-Use Code**: Setiap kode hanya bisa redeem 1x, tidak bisa dipakai ulang
-  - **Detailed Expiry Messages**: User dapat notifikasi jelas alasan kode/akses tidak valid
-  - **PREMIUM = BELI ONLY**: Redeem hanya untuk VIP, PREMIUM hanya bisa dibeli paket
-
-## Environment Variables
-- `TELEGRAM_BOT_TOKEN`: Telegram bot API token (required)
+A comprehensive Telegram bot for contact management and file conversion operations. The bot provides role-based access control (FREE/VIP/PREMIUM/OWNER) with various utilities for manipulating contact files, including format conversions (TXT, VCF, XLSX), file splitting/merging, and contact creation tools. Built with Python using the python-telegram-bot library.
 
 ## User Preferences
-- All interactions via keyboard buttons (no `/` commands)
-- Markdown formatting for all bot messages
-- Auto-cleanup temporary files
-- Session tracking for multi-step processes
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Bot Framework
+- **Library**: python-telegram-bot v20.7
+- **Architecture Pattern**: Modular command handlers with conversation flows
+- **Rationale**: Separates concerns by organizing each feature into its own module, making the codebase maintainable and scalable. Uses ConversationHandler for multi-step user interactions.
+
+### User Management & Authorization
+- **Access Control**: Role-based system with 4 tiers (FREE, VIP, PREMIUM, OWNER)
+- **User Persistence**: JSON file-based storage (`users.json`)
+- **Session Management**: Conversation states tracked via `sessions.json`
+- **Rationale**: Simple file-based storage is sufficient for bot-scale operations without the overhead of a database. Role hierarchy allows progressive feature unlocking.
+
+### Data Storage
+- **Primary Storage**: JSON files for all persistent data
+  - `users.json`: User profiles, roles, expiry dates, operation counts
+  - `redeem.json`: VIP/Premium redemption codes
+  - `admins.json`: Admin contact data
+  - `sessions.json`: Active conversation states
+- **Rationale**: Lightweight, human-readable, and sufficient for the scale. No complex queries needed, making JSON ideal over a relational database.
+
+### File Processing Pipeline
+- **Supported Formats**: TXT, VCF (vCard), XLSX/XLS
+- **Processing Libraries**:
+  - `vobject`: VCF file parsing and generation
+  - `pandas` + `openpyxl`: Excel file handling
+  - Native Python: Text file operations
+- **Workflow**: Download → Process → Generate → Upload → Cleanup
+- **Rationale**: Each library is industry-standard for its format. Temporary file approach prevents memory issues with large files.
+
+### Feature Access Gating
+- **FREE Tier**: Basic read operations (count contacts, check names, view status)
+- **VIP Tier**: All conversions, file operations, split/merge
+- **PREMIUM Tier**: Extended duration access to VIP features
+- **OWNER Tier**: User management, redeem code generation, statistics
+- **Rationale**: Freemium model encourages upgrades while providing value to all users. Owner controls maintain security and prevent abuse.
+
+### Auto-Verification System
+- **Trigger**: Users joining specific VIP groups
+- **Grant**: Automatic 7-day VIP access
+- **Implementation**: ChatMemberUpdated event handler checks group membership
+- **Rationale**: Growth mechanism that rewards community participation with temporary premium access.
+
+### Redeem Code System
+- **Code Generation**: Random 12-character alphanumeric strings
+- **Properties**: Role assignment, duration, code expiration, single-use
+- **Validation**: Checks code validity, expiration, and usage status
+- **Rationale**: Provides flexible access distribution method for promotions and partnerships.
+
+### Command Flow Architecture
+- **Pattern**: ConversationHandler with state machines
+- **States**: Multi-step input collection (file → filename → options → process)
+- **Cancellation**: Universal "❌ BATAL ❌" button in all flows
+- **Rationale**: Guides users through complex operations step-by-step, reducing errors and improving UX.
+
+### Security & Protection
+- **Anti-Theft**: Creator attribution enforcement in README
+- **Owner Validation**: Hard-coded OWNER_ID for administrative functions
+- **Access Checks**: Pre-execution role validation on all protected commands
+- **Rationale**: Prevents unauthorized access and maintains attribution to original creator.
+
+### Expiry Management
+- **Background Task**: Periodic checker for expired VIP/PREMIUM users
+- **Notifications**: Automated messages when access expires
+- **Auto-Downgrade**: Expired users revert to FREE tier
+- **Rationale**: Ensures fair access control and encourages renewals through timely notifications.
+
+## External Dependencies
+
+### Telegram Bot API
+- **Service**: Telegram Bot Platform
+- **Purpose**: Primary user interface and interaction layer
+- **Integration**: Via `python-telegram-bot` wrapper library
+- **Authentication**: Bot token (environment variable or configuration)
+
+### Python Libraries
+- **python-telegram-bot (v20.7)**: Core bot framework and API wrapper
+- **vobject (v0.9.6.1)**: VCF/vCard file parsing and generation
+- **pandas (v2.0.3)**: Excel file data manipulation
+- **openpyxl (v3.1.2)**: XLSX file reading/writing
+- **python-dateutil (v2.8.2)**: Date/time parsing and manipulation
+
+### File System
+- **Purpose**: Temporary file storage during processing operations
+- **Pattern**: Create temp files → Process → Send result → Delete temp files
+- **Location**: Bot's working directory with user_id-based naming
+
+### VIP Groups (Community Integration)
+- **Groups**: 
+  - https://t.me/agentviber12
+  - https://t.me/channelviber
+- **Purpose**: Auto-grant VIP access to members (7-day trial)
+- **Implementation**: ChatMemberUpdated webhook integration
+
+### No Database Required
+- **Note**: Current implementation uses JSON file storage exclusively. No PostgreSQL, MySQL, or other database systems are configured. Future scaling may require database integration, but current architecture supports migration without major refactoring.
