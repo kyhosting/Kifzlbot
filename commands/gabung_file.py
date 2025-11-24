@@ -36,8 +36,7 @@ Kirim satu per satu, lalu tekan
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILES
 
 async def gabung_file_collect(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -69,8 +68,7 @@ Masukkan nama file hasil gabungan
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_FILENAME
     
     if not update.message.document:

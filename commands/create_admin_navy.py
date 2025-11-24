@@ -54,8 +54,7 @@ Input satu nomor minimal
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=mode_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=mode_keyboard)
     return ASK_MODE
 
 async def create_admin_navy_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -86,8 +85,7 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_ADMIN_NUM
         
     elif mode == "MODE B - AUTO PARSE":
@@ -110,8 +108,7 @@ Bot akan parse otomatis!
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_BLOCK_INPUT
         
     elif mode == "MODE C - MINIMAL":
@@ -129,8 +126,7 @@ Kirim 1 nomor telepon
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_ADMIN_NUM
     
     else:
@@ -165,8 +161,7 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         context.user_data['navy_numbers'] = []
         return ASK_FILENAME
     
@@ -182,8 +177,7 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_NAVY_NUM
 
 async def create_admin_navy_navy(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -211,8 +205,7 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def create_admin_navy_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -238,8 +231,7 @@ Hasil: admin 01, navy 01
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -342,6 +334,5 @@ Masukkan nama file output
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME

@@ -46,8 +46,7 @@ lainnya.
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def rapikan_txt_file(update: Update, context: ContextTypes.DEFAULT_TYPE):

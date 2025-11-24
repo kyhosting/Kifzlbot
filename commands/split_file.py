@@ -51,8 +51,7 @@ dipecah menjadi beberapa file
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def split_file_receive(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -94,8 +93,7 @@ Hasil: kontak1, kontak2, kontak3...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_OUTPUT_NAME
 
 async def split_file_output_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -122,8 +120,7 @@ Hasil: kontak1, kontak2, kontak3...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE_PREFIX
 
 async def split_file_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -155,8 +152,7 @@ Hasil: kontak 01, kontak 02, kontak 03...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACT_PREFIX
 
 async def split_contact_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -193,8 +189,7 @@ PER BAGIAN: Bagi file menjadi X bagian
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=mode_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=mode_keyboard)
     return ASK_SPLIT_MODE
 
 async def split_mode_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -240,8 +235,7 @@ Contoh: 5
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_SPLIT_VALUE
 
 async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):

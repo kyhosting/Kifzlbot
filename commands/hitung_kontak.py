@@ -28,8 +28,7 @@ menghitung jumlah kontak/nomor
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def hitung_kontak_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -77,8 +76,7 @@ Total Kontak: {total}
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
         
     except Exception as e:
         await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```",
