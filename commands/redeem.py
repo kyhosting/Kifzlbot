@@ -6,7 +6,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
-from commands.redeem_utils import is_code_expired, format_duration_readable
+from commands.redeem_utils import is_code_expired, format_duration_readable, format_code_expiry_with_time
 
 ASK_CODE = range(1)
 
@@ -80,9 +80,11 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     role = code_data.get("role", "VIP")
     duration_days = code_data.get("duration_days", 7)
+    code_expired = code_data.get("code_expired")
     
     expired = datetime.now() + timedelta(days=duration_days)
     duration_readable = format_duration_readable(duration_days)
+    code_expiry_readable = format_code_expiry_with_time(duration_days) if code_expired else "Permanent"
     
     user_id = update.effective_user.id
     
@@ -103,15 +105,13 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
 🎁 REDEEM BERHASIL ✅
 ───────────────────────────────────────
 
-Role        : {role} (GRATIS)
-Durasi      : {duration_readable}
-  └─ Detail: {duration_days} hari
-  
-Aktif Mulai : {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}
-Aktif s.d.  : {expired.strftime("%d-%m-%Y %H:%M:%S")}
+Role          : {role} (GRATIS)
+Durasi Akses  : {duration_readable}
+
+Aktif Mulai   : {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}
+Aktif s.d.    : {expired.strftime("%d-%m-%Y %H:%M:%S")}
 
 Selamat menikmati akses {role}!
-
 ───────────────────────────────────────
 ```"""
     
