@@ -7,7 +7,7 @@ from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
 from commands.redeem_utils import generate_random_code, format_expired_date
 
-ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_ROLE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(9)
+ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(8)
 
 async def menu_owner_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
@@ -248,6 +248,7 @@ async def menu_owner_redeem_mode(update: Update, context: ContextTypes.DEFAULT_T
         # Generate random code
         code = generate_random_code()
         context.user_data['redeem_code'] = code
+        context.user_data['redeem_role'] = "VIP"
         
         text = f"""```
 🎲 RANDOM CODE GENERATED
@@ -256,28 +257,32 @@ async def menu_owner_redeem_mode(update: Update, context: ContextTypes.DEFAULT_T
 Kode Generated:
 {code}
 
+Role: VIP (hanya untuk VIP)
+PREMIUM hanya bisa dibeli!
+
 ───────────────────────────────────────
 ```"""
         
         await update.message.reply_text(text, parse_mode="Markdown")
         
-        # Continue to role selection
-        role_keyboard = ReplyKeyboardMarkup([
-            [KeyboardButton("VIP"), KeyboardButton("PREMIUM")],
-            [KeyboardButton("❌ BATAL ❌")]
-        ], resize_keyboard=True)
+        # Continue to duration
+        cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
         
         text = """```
-🎭 ROLE REDEEM
+⏰ DURASI VIP
 ───────────────────────────────────────
 
-Pilih role untuk redeem code:
+Masukkan durasi dalam hari
+(berapa lama user mendapat akses VIP)
+
+Contoh: 7
+(untuk 7 hari VIP)
 
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=role_keyboard)
-        return ASK_REDEEM_ROLE
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        return ASK_REDEEM_DURATION
     
     else:  # CUSTOM
         cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
@@ -303,45 +308,19 @@ async def menu_owner_redeem_code(update: Update, context: ContextTypes.DEFAULT_T
     
     code = update.message.text.strip().upper()
     context.user_data['redeem_code'] = code
-    
-    role_keyboard = ReplyKeyboardMarkup([
-        [KeyboardButton("VIP"), KeyboardButton("PREMIUM")],
-        [KeyboardButton("❌ BATAL ❌")]
-    ], resize_keyboard=True)
-    
-    text = """```
-🎭 ROLE REDEEM
-───────────────────────────────────────
-
-Pilih role untuk redeem code:
-
-───────────────────────────────────────
-```"""
-    
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=role_keyboard)
-    return ASK_REDEEM_ROLE
-
-async def menu_owner_redeem_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.text == "❌ BATAL ❌":
-        return await menu_owner_start(update, context)
-    
-    role = update.message.text
-    if role not in ["VIP", "PREMIUM"]:
-        await update.message.reply_text("```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
-        return ASK_REDEEM_ROLE
-    
-    context.user_data['redeem_role'] = role
+    context.user_data['redeem_role'] = "VIP"
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
     
     text = """```
-⏰ DURASI REDEEM
+⏰ DURASI VIP
 ───────────────────────────────────────
 
 Masukkan durasi dalam hari
+(berapa lama user mendapat akses VIP)
 
 Contoh: 7
-(untuk 7 hari)
+(untuk 7 hari VIP)
 
 ───────────────────────────────────────
 ```"""
@@ -425,9 +404,11 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
 ───────────────────────────────────────
 
 Kode         : {code}
-Role         : {role}
-Durasi User  : {user_duration} hari
-Kode Expired : {code_expired if code_expired else "Permanent"}
+Role         : VIP (GRATIS)
+Durasi       : {user_duration} hari
+Kode Berlaku : {code_expired if code_expired else "Permanent"}
+
+Note: PREMIUM hanya bisa dibeli, bukan redeem!
 
 ───────────────────────────────────────
 ```"""

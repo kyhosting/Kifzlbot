@@ -45,10 +45,10 @@ from commands.upgradeprem import upgradeprem_show, handle_premium_callback
 from commands.aksesvip import aksesvip_show, handle_aksesvip_callback
 from commands.menu_owner import (
     menu_owner_start, menu_owner_action, menu_owner_user_id,
-    menu_owner_role, menu_owner_duration, menu_owner_redeem_code,
-    menu_owner_redeem_role, menu_owner_redeem_duration,
+    menu_owner_role, menu_owner_duration, menu_owner_redeem_code, 
+    menu_owner_redeem_mode, menu_owner_code_expiry, menu_owner_redeem_duration,
     ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION,
-    ASK_REDEEM_CODE, ASK_REDEEM_ROLE, ASK_REDEEM_DURATION
+    ASK_REDEEM_CODE, ASK_REDEEM_MODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY
 )
 
 logging.basicConfig(
@@ -204,9 +204,10 @@ def main():
             ASK_USER_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_user_id)],
             ASK_ROLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_role)],
             ASK_DURATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_duration)],
+            ASK_REDEEM_MODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_redeem_mode)],
             ASK_REDEEM_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_redeem_code)],
-            ASK_REDEEM_ROLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_redeem_role)],
             ASK_REDEEM_DURATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_redeem_duration)],
+            ASK_CODE_EXPIRY: [MessageHandler(filters.TEXT & ~filters.COMMAND, menu_owner_code_expiry)],
         },
         fallbacks=[MessageHandler(filters.Regex("^🔙 KEMBALI$"), menu_owner_start)],
     )
