@@ -1,0 +1,90 @@
+import json
+import os
+from datetime import datetime, timedelta
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram.ext import ContextTypes, ConversationHandler
+from commands.vip_system import update_user_data, get_user_data
+from commands.menu import get_main_menu_keyboard
+
+ASK_CODE = range(1)
+
+def load_redeem_codes():
+    try:
+        with open("redeem.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_redeem_codes(data):
+    with open("redeem.json", "w") as f:
+        json.dump(data, f, indent=2)
+
+async def redeem_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
+    
+    text = """```
+🎁 REDEEM CODE
+───────────────────────────────────────
+
+Masukkan kode redeem Anda
+untuk mendapatkan akses VIP/PREMIUM
+
+───────────────────────────────────────
+```"""
+    
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    return ASK_CODE
+
+async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.text == "❌ BATAL ❌":
+        keyboard = get_main_menu_keyboard(update.effective_user.id)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        return ConversationHandler.END
+    
+    code = update.message.text.strip().upper()
+    redeem_codes = load_redeem_codes()
+    
+    keyboard = get_main_menu_keyboard(update.effective_user.id)
+    
+    if code not in redeem_codes:
+        await update.message.reply_text("```\n❌ Kode redeem tidak valid!\n```", parse_mode="Markdown", reply_markup=keyboard)
+        return ConversationHandler.END
+    
+    code_data = redeem_codes[code]
+    
+    if code_data.get("used", False):
+        await update.message.reply_text("```\n❌ Kode redeem sudah digunakan!\n```", parse_mode="Markdown", reply_markup=keyboard)
+        return ConversationHandler.END
+    
+    role = code_data.get("role", "VIP")
+    duration_days = code_data.get("duration_days", 7)
+    
+    expired = datetime.now() + timedelta(days=duration_days)
+    
+    update_user_data(update.effective_user.id, {
+        "role": role,
+        "expired": expired
+    })
+    
+    code_data["used"] = True
+    code_data["used_by"] = update.effective_user.id
+    code_data["used_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    redeem_codes[code] = code_data
+    save_redeem_codes(redeem_codes)
+    
+    text = f"""```
+🎁 REDEEM BERHASIL
+───────────────────────────────────────
+
+Role        : {role}
+Aktif s.d.  : {expired.strftime("%d-%m-%Y %H:%M")}
+Durasi      : {duration_days} hari
+
+Selamat menikmati akses {role}!
+
+───────────────────────────────────────
+```"""
+    
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+    return ConversationHandler.END
