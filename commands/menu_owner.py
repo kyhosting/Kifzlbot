@@ -407,6 +407,10 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
         redeem_codes = {}
     
     # Calculate code expiry datetime
+    code_expiry_days = code_expiry_days or 0
+    code_expiry_hours = code_expiry_hours or 0
+    code_expiry_minutes = code_expiry_minutes or 0
+    
     if code_expiry_days > 0 or code_expiry_hours > 0 or code_expiry_minutes > 0:
         code_expiry_dt = datetime.now() + timedelta(days=code_expiry_days, hours=code_expiry_hours, minutes=code_expiry_minutes)
         code_expired_str = code_expiry_dt.strftime("%Y-%m-%d %H:%M:%S")

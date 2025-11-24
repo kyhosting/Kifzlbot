@@ -10,7 +10,7 @@ def generate_random_code(length=12):
 def parse_duration_text(text):
     """
     Parse text input like '2 hari', '1 bulan', '3 bulan 5 hari' to days
-    Returns tuple: (days, hours, minutes) or (None, None, None) if invalid
+    Returns tuple: (days, hours, minutes) - defaults to (0, 0, 0) if invalid
     """
     text = text.strip().lower()
     
@@ -41,9 +41,9 @@ def parse_duration_text(text):
     if match_menit:
         minutes += int(match_menit.group(1))
     
-    # Check if any valid pattern was found
+    # Check if any valid pattern was found - return (0,0,0) if nothing found
     if days == 0 and hours == 0 and minutes == 0:
-        return None, None, None
+        return 0, 0, 0
     
     return days, hours, minutes
 
@@ -88,7 +88,7 @@ def is_code_expired(code_data):
     except:
         return False
 
-def format_code_expiry_readable(days, hours=0, minutes=0):
+def format_code_expiry_readable(days=0, hours=0, minutes=0):
     """Format code expiry dengan hari jam menit detail"""
     if days == 0 and hours == 0 and minutes == 0:
         return "Permanent"

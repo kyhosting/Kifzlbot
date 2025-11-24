@@ -91,6 +91,13 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
+    # Send banner image first
+    try:
+        with open("project_banner.png", "rb") as banner:
+            await update.message.reply_photo(photo=banner, caption="🎌 KIFZL PROJECT", parse_mode="Markdown")
+    except:
+        pass
+    
     await send_with_banner(update, context, text, keyboard_main)
     
     if not is_owner and not is_verified and role == "FREE":
