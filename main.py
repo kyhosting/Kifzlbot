@@ -67,6 +67,7 @@ def ensure_json_files():
 
 async def handle_text_messages(update: Update, context):
     text = update.message.text
+    await check_and_notify_expired_users(context)
     
     if text in ["menu", "MENU", "Menu", "🔙 MENU 🔙"]:
         await show_menu(update, context)
@@ -234,8 +235,6 @@ def main():
     application.add_handler(TypeHandler(ChatMemberUpdated, handle_member_join))
     
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_messages))
-    
-    application.job_queue.run_repeating(check_and_notify_expired_users, interval=3600, first=10)
     
     logger.info("Bot started successfully!")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
