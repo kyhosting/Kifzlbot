@@ -5,6 +5,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 ASK_FILES, ASK_FILENAME = range(2)
 
@@ -36,7 +37,7 @@ Kirim satu per satu, lalu tekan
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILES
 
 async def gabung_file_collect(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -45,7 +46,7 @@ async def gabung_file_collect(update: Update, context: ContextTypes.DEFAULT_TYPE
             if os.path.exists(filepath['path']):
                 os.remove(filepath['path'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     if update.message.text == "✅ SELESAI ✅":
@@ -67,7 +68,7 @@ Masukkan nama file hasil gabungan
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         return ASK_FILENAME
     
     if not update.message.document:
@@ -107,7 +108,7 @@ async def gabung_file_merge(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if os.path.exists(filepath['path']):
                 os.remove(filepath['path'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     output_name = update.message.text.strip()
@@ -154,7 +155,7 @@ async def gabung_file_merge(update: Update, context: ContextTypes.DEFAULT_TYPE):
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
     finally:
         for file_info in merge_files:
             if os.path.exists(file_info['path']):

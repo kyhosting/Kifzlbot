@@ -2,6 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatMem
 from telegram.ext import ContextTypes
 from datetime import datetime, timedelta
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
+from commands.banner_helper import send_with_banner
 
 async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -59,11 +60,8 @@ async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE)
     from commands.menu import get_main_menu_keyboard
     keyboard = get_main_menu_keyboard(query.from_user.id)
     
-    await query.message.reply_text(
-        "```\n🎌 Silakan pilih menu di bawah\n```",
-        parse_mode="Markdown",
-        reply_markup=keyboard
-    )
+    await query.message.reply_text("")
+    await send_with_banner(query.from_user, context, "```\n🎌 Silakan pilih menu di bawah\n```", keyboard)
 
 async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member_update = update.my_chat_member

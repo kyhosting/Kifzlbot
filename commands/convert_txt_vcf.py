@@ -4,6 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 ASK_FILE, ASK_FILENAME, ASK_CONTACTNAME = range(3)
 
@@ -43,13 +44,13 @@ untuk dikonversi menjadi file .vcf
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILE
 
 async def txt_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
@@ -72,7 +73,7 @@ async def txt_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not numbers:
         os.remove(filepath)
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Tidak ada nomor ditemukan!\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Tidak ada nomor ditemukan!\n```", keyboard)
         return ConversationHandler.END
     
     context.user_data['phone_numbers'] = numbers
@@ -94,7 +95,7 @@ Contoh: kontak
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILENAME
 
 async def txt_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -102,7 +103,7 @@ async def txt_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE
         if 'txt_filepath' in context.user_data and os.path.exists(context.user_data['txt_filepath']):
             os.remove(context.user_data['txt_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     context.user_data['vcf_filename'] = update.message.text.strip()
@@ -122,7 +123,7 @@ Hasil: kontak 0001, kontak 0002, ...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def txt_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -130,7 +131,7 @@ async def txt_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         if 'txt_filepath' in context.user_data and os.path.exists(context.user_data['txt_filepath']):
             os.remove(context.user_data['txt_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     contact_name = update.message.text.strip()
@@ -157,7 +158,7 @@ async def txt_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
     finally:
         if 'txt_filepath' in context.user_data and os.path.exists(context.user_data['txt_filepath']):
             os.remove(context.user_data['txt_filepath'])
