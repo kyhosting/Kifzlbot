@@ -33,9 +33,18 @@ def format_duration_readable(days):
     else:
         return f"{days} hari"
 
-def format_code_expiry_readable(days):
-    """Format code expiry date (hari/bulan readable)"""
+def format_code_expiry_with_time(days):
+    """Format code expiry with hari/jam/menit detail"""
     if days <= 0:
         return "Permanent"
     
-    return format_duration_readable(days)
+    # Calculate total hours and minutes
+    total_hours = days * 24
+    hours = total_hours % 24
+    minutes = 0
+    
+    # Simple format: just show hari and jam
+    if hours > 0:
+        return f"{days} hari {hours} jam"
+    else:
+        return f"{days} hari"
