@@ -88,6 +88,7 @@ Saya siap bantu convert file & management kontak.
     
     keyboard_main = get_main_menu_keyboard(user_id)
     is_owner = (user_id == OWNER_ID)
+    is_verified = role in ["VIP", "PREMIUM"]
     
     try:
         photos = await user.get_profile_photos(limit=1)
@@ -104,7 +105,7 @@ Saya siap bantu convert file & management kontak.
         else:
             await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
         
-        if not is_owner:
+        if not is_owner and not is_verified and role == "FREE":
             verify_keyboard = [
                 [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
                 [
