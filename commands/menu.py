@@ -51,4 +51,4 @@ Pilih menu yang tersedia di bawah ini:
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)

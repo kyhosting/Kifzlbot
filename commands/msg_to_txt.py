@@ -27,13 +27,13 @@ Anda ubah menjadi file .txt
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_MESSAGE
 
 async def msg_to_txt_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     context.user_data['msg_content'] = update.message.text
@@ -52,13 +52,13 @@ Contoh: kontak_saya
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     filename = update.message.text.strip()
@@ -84,7 +84,7 @@ async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
+        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
     finally:
         if os.path.exists(filepath):
             os.remove(filepath)

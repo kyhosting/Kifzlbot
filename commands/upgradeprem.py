@@ -35,7 +35,7 @@ Pilih paket di bawah ini:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    await send_with_banner(update, context, text, reply_markup)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 async def handle_premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query

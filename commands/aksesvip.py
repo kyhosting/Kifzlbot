@@ -27,7 +27,7 @@ Anda dapat memperoleh akses VIP melalui:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    await send_with_banner(update, context, text, reply_markup)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -38,4 +38,4 @@ async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT
         from commands.banner_helper import send_with_banner
         keyboard = get_main_menu_keyboard(update.effective_user.id)
         await query.message.reply_text("")
-        await send_with_banner(query.from_user, context, "```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```", keyboard)
+        await send_with_banner(query.from_user, context, "```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```", parse_mode="Markdown", reply_markup=keyboard)
