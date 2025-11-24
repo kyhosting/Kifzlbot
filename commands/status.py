@@ -88,4 +88,13 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = get_main_menu_keyboard(user_id)
     
-    await update.message.reply_text(status_info, parse_mode="Markdown", reply_markup=keyboard)
+    try:
+        with open("bot_banner.jpg", "rb") as banner:
+            await update.message.reply_photo(
+                photo=banner,
+                caption=status_info,
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+    except:
+        await update.message.reply_text(status_info, parse_mode="Markdown", reply_markup=keyboard)
