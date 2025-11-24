@@ -18,38 +18,24 @@ def is_code_expired(code_data):
     except:
         return False
 
-def format_expired_date(days):
-    """Format expiry date dengan jam:menit"""
-    expired = datetime.now() + timedelta(days=days)
-    return expired.strftime("%Y-%m-%d %H:%M:%S")
-
 def format_duration_readable(days):
-    """Convert days to readable format (hari/bulan/tahun)"""
+    """Convert days to readable format (hari/bulan)"""
     if days <= 0:
         return "Permanent"
     
     months = days // 30
     remaining_days = days % 30
-    years = months // 12
-    remaining_months = months % 12
     
-    parts = []
-    if years > 0:
-        parts.append(f"{years} tahun")
-    if remaining_months > 0:
-        parts.append(f"{remaining_months} bulan")
-    if remaining_days > 0:
-        parts.append(f"{remaining_days} hari")
-    
-    if not parts:
+    if months > 0 and remaining_days == 0:
+        return f"{months} bulan" if months > 1 else "1 bulan"
+    elif months > 0 and remaining_days > 0:
+        return f"{months} bulan {remaining_days} hari"
+    else:
         return f"{days} hari"
-    
-    return ", ".join(parts)
 
-def calculate_expiry_date(days):
-    """Calculate exact expiry date"""
+def format_code_expiry_readable(days):
+    """Format code expiry date (hari/bulan readable)"""
     if days <= 0:
-        return "Permanent (tidak ada tanggal kadaluarsa)"
+        return "Permanent"
     
-    expired = datetime.now() + timedelta(days=days)
-    return expired.strftime("%d-%m-%Y %H:%M:%S")
+    return format_duration_readable(days)
