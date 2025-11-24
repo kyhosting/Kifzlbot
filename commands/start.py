@@ -91,13 +91,12 @@ Saya siap bantu convert file & management kontak.
     is_verified = role in ["VIP", "PREMIUM"]
     
     try:
-        with open("bot_banner.jpg", "rb") as banner:
-            await update.message.reply_photo(
-                photo=banner,
-                caption=text,
-                parse_mode="Markdown",
-                reply_markup=keyboard_main
-            )
+        await update.message.reply_photo(
+            photo=open("bot_banner.jpg", "rb"),
+            caption=text,
+            parse_mode="Markdown",
+            reply_markup=keyboard_main
+        )
         
         if not is_owner and not is_verified and role == "FREE":
             verify_keyboard = [
