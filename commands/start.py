@@ -91,15 +91,13 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
-    # Send banner photo first
+    # Send photo with text caption combined
     try:
         with open("project_banner.png", "rb") as banner:
-            await update.message.reply_photo(photo=banner, caption="🎌 KIFZL PROJECT BOT")
+            await update.message.reply_photo(photo=banner, caption=text, parse_mode="Markdown", reply_markup=keyboard_main)
     except:
-        pass
-    
-    # Send text with menu
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
+        # Fallback to text only if photo fails
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
     
     if not is_owner and not is_verified and role == "FREE":
         verify_keyboard = [
