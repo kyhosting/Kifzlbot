@@ -51,24 +51,6 @@ Nikmati semua fitur premium bot kami.
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     await query.edit_message_text(text, parse_mode="Markdown", reply_markup=reply_markup)
-    
-    notification_text = """```
-🎊 NOTIFIKASI VERIFIKASI 🎊
-
-Akun Anda telah berhasil diverifikasi!
-
-✅ VIP Status: AKTIF
-✅ Durasi: 7 hari
-✅ Akses Penuh: DIBERIKAN
-
-Gunakan bot dengan sebaik-baiknya.
-Terima kasih sudah bergabung! 🙏
-```"""
-    
-    try:
-        await user.send_message(notification_text, parse_mode="Markdown")
-    except:
-        pass
 
 async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
