@@ -88,32 +88,38 @@ async def handle_text_messages(update: Update, context):
 def verify_bot_ownership():
     """Verify bot name hasn't been changed - ANTI-THEFT PROTECTION"""
     required_creator = "@KIFZLDEV"
+    tampering_detected = False
     
-    # Check start.py for creator name
-    with open("commands/start.py", "r") as f:
-        start_content = f.read()
-        if required_creator not in start_content:
-            print("\n" + "="*50)
-            print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
-            print("="*50)
-            print(f"❌ Bot creator name changed from: {required_creator}")
-            print("❌ This bot is protected and can only be fixed by @KIFZLDEV")
-            print("❌ Bot will NOT start until original creator name is restored!")
-            print("="*50 + "\n")
-            raise Exception(f"Bot name tampering detected! Only @KIFZLDEV can fix this.")
+    # Check start.py for creator name in specific location
+    try:
+        with open("commands/start.py", "r", encoding="utf-8") as f:
+            start_content = f.read()
+            # Look for the specific line with creator info
+            if "(BY @KIFZLDEV)" not in start_content:
+                tampering_detected = True
+    except:
+        tampering_detected = True
     
-    # Check menu.py for creator name
-    with open("commands/menu.py", "r") as f:
-        menu_content = f.read()
-        if required_creator not in menu_content:
-            print("\n" + "="*50)
-            print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
-            print("="*50)
-            print(f"❌ Bot creator name changed from: {required_creator}")
-            print("❌ This bot is protected and can only be fixed by @KIFZLDEV")
-            print("❌ Bot will NOT start until original creator name is restored!")
-            print("="*50 + "\n")
-            raise Exception(f"Bot name tampering detected! Only @KIFZLDEV can fix this.")
+    # Check menu.py for creator name in specific location
+    try:
+        with open("commands/menu.py", "r", encoding="utf-8") as f:
+            menu_content = f.read()
+            # Look for the specific line with creator info
+            if "(BY @KIFZLDEV)" not in menu_content:
+                tampering_detected = True
+    except:
+        tampering_detected = True
+    
+    if tampering_detected:
+        print("\n" + "="*50)
+        print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
+        print("="*50)
+        print(f"❌ Bot creator name has been changed or removed!")
+        print(f"❌ This bot is protected and can ONLY be fixed by @KIFZLDEV")
+        print("❌ Bot will NOT start until original creator name is restored!")
+        print("❌ The creator line MUST be: (BY @KIFZLDEV)")
+        print("="*50 + "\n")
+        raise Exception(f"ANTI-THEFT PROTECTION TRIGGERED: Bot name tampering detected! Only @KIFZLDEV can restore this bot.")
 
 def main():
     print("\n" + "="*50)
