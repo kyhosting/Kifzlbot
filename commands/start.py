@@ -89,7 +89,11 @@ Saya siap bantu convert file & management kontak.
     keyboard_main = get_main_menu_keyboard(user_id)
     
     verify_keyboard = [
-        [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")]
+        [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
+        [
+            InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
+            InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
+        ]
     ]
     verify_markup = InlineKeyboardMarkup(verify_keyboard)
     

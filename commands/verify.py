@@ -1,25 +1,41 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatMember
 from telegram.ext import ContextTypes
-from commands.vip_system import get_user_role, OWNER_ID
+from datetime import datetime, timedelta
+from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 
 async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
     user_id = query.from_user.id
+    user = query.from_user
+    
+    expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+    
+    update_user_data(user_id, {
+        "role": "VIP",
+        "expired": expired_date,
+        "verified": True
+    })
+    
     role = get_user_role(user_id)
+    expired_str = (datetime.now() + timedelta(days=7)).strftime("%d-%m-%Y %H:%M")
     
     text = f"""```
-✅ VERIFIKASI BERHASIL
+✅ VERIFIKASI BERHASIL!
 
-Nama      : {query.from_user.full_name}
-ID        : {user_id}
-Username  : @{query.from_user.username if query.from_user.username else 'Tidak ada'}
-Role      : {role}
-Status    : {'✅ AKTIF' if role in ['VIP', 'PREMIUM'] else '❌ TIDAK AKTIF'}
+Nama         : {user.full_name}
+ID           : {user_id}
+Username     : @{user.username if user.username else 'Tidak ada'}
+Role         : {role}
+Status       : ✅ AKTIF
+Masa Aktif   : {expired_str}
+Sisa Hari    : 7 hari
 
-Anda sudah terverifikasi!
-Selamat menggunakan bot kami 🎉
+🎉 Selamat! Anda telah mendapatkan
+akses VIP GRATIS 7 hari!
+
+Nikmati semua fitur premium bot kami.
 ```"""
     
     keyboard = [
@@ -28,6 +44,24 @@ Selamat menggunakan bot kami 🎉
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     await query.edit_message_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    
+    notification_text = """```
+🎊 NOTIFIKASI VERIFIKASI 🎊
+
+Akun Anda telah berhasil diverifikasi!
+
+✅ VIP Status: AKTIF
+✅ Durasi: 7 hari
+✅ Akses Penuh: DIBERIKAN
+
+Gunakan bot dengan sebaik-baiknya.
+Terima kasih sudah bergabung! 🙏
+```"""
+    
+    try:
+        await user.send_message(notification_text, parse_mode="Markdown")
+    except:
+        pass
 
 async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query

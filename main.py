@@ -8,8 +8,10 @@ from telegram.ext import (
     MessageHandler,
     ConversationHandler,
     CallbackQueryHandler,
+    TypeHandler,
     filters
 )
+from telegram import ChatMemberUpdated
 
 from commands import vip_system
 from commands.start import start_command
@@ -228,8 +230,7 @@ def main():
     application.add_handler(CallbackQueryHandler(handle_verify_callback, pattern="^verify_user$"))
     application.add_handler(CallbackQueryHandler(handle_verify_back, pattern="^verify_back$"))
     
-    from telegram import ChatMember
-    application.add_handler(MessageHandler(filters.ChatMemberStatusUpdate.MY_CHAT_MEMBER, handle_member_join))
+    application.add_handler(TypeHandler(ChatMemberUpdated, handle_member_join))
     
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_messages))
     
