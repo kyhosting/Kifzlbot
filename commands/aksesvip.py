@@ -1,5 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
+from commands.banner_helper import send_with_banner
 
 async def aksesvip_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = """```
@@ -26,7 +27,7 @@ Anda dapat memperoleh akses VIP melalui:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    await send_with_banner(update, context, text, reply_markup)
 
 async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -34,9 +35,7 @@ async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT
     
     if query.data == "akses_redeem":
         from commands.menu import get_main_menu_keyboard
+        from commands.banner_helper import send_with_banner
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await query.message.reply_text(
-            "```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```",
-            parse_mode="Markdown",
-            reply_markup=keyboard
-        )
+        await query.message.reply_text("")
+        await send_with_banner(query.from_user, context, "```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```", keyboard)
