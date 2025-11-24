@@ -5,7 +5,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import OWNER_ID, load_users, save_users
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
-from commands.redeem_utils import generate_random_code, format_duration_readable, format_code_expiry_readable
+from commands.redeem_utils import generate_random_code, format_duration_readable, format_code_expiry_readable, parse_duration_text, format_duration_text_readable
 
 ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(8)
 
@@ -272,11 +272,18 @@ PREMIUM hanya bisa dibeli!
 ⏰ DURASI VIP
 ───────────────────────────────────────
 
-Masukkan durasi dalam hari
+Masukkan durasi dengan format teks
 (berapa lama user mendapat akses VIP)
 
-Contoh: 7
-(untuk 7 hari VIP)
+✅ Contoh Valid:
+• 2 hari
+• 1 bulan
+• 3 bulan
+• 15 hari
+
+❌ Tidak Valid:
+• 7 (hanya angka)
+• 30d
 
 ───────────────────────────────────────
 ```"""
@@ -316,11 +323,18 @@ async def menu_owner_redeem_code(update: Update, context: ContextTypes.DEFAULT_T
 ⏰ DURASI VIP
 ───────────────────────────────────────
 
-Masukkan durasi dalam hari
+Masukkan durasi dengan format teks
 (berapa lama user mendapat akses VIP)
 
-Contoh: 7
-(untuk 7 hari VIP)
+✅ Contoh Valid:
+• 2 hari
+• 1 bulan
+• 3 bulan
+• 15 hari
+
+❌ Tidak Valid:
+• 7 (hanya angka)
+• 30d
 
 ───────────────────────────────────────
 ```"""
@@ -332,13 +346,13 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
     if update.message.text == "❌ BATAL ❌":
         return await menu_owner_start(update, context)
     
-    try:
-        duration = int(update.message.text.strip())
-    except:
-        await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
+    days, hours, minutes = parse_duration_text(update.message.text)
+    if days is None:
+        await update.message.reply_text("```\n❌ Format tidak valid!\nGunakan: 2 hari, 1 bulan, dll\n```", parse_mode="Markdown")
         return ASK_REDEEM_DURATION
     
-    context.user_data['redeem_user_duration'] = duration
+    context.user_data['redeem_user_duration'] = days
+    context.user_data['redeem_user_duration_display'] = format_duration_text_readable(days, hours, minutes)
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
     
@@ -346,12 +360,20 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
 ⏰ EXPIRED KODE REDEEM
 ───────────────────────────────────────
 
-Berapa hari kode ini berlaku?
+Berapa lama kode ini berlaku?
 
-Contoh: 30
-(kode berlaku 30 hari dari sekarang)
+✅ Contoh Valid:
+• 1 jam
+• 2 menit
+• 1 hari
+• 7 hari
+• 1 bulan
 
-Ketik 0 untuk permanent (tidak expires)
+❌ Tidak Valid:
+• 30 (hanya angka)
+• 1h
+
+Ketik: permanent (untuk tidak expires)
 
 ───────────────────────────────────────
 ```"""
@@ -363,15 +385,20 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
     if update.message.text == "❌ BATAL ❌":
         return await menu_owner_start(update, context)
     
-    try:
-        code_expiry_days = int(update.message.text.strip())
-    except:
-        await update.message.reply_text("```\n❌ Nilai harus angka!\n```", parse_mode="Markdown")
-        return ASK_CODE_EXPIRY
+    if update.message.text.strip().lower() == "permanent":
+        code_expiry_days = 0
+        code_expiry_hours = 0
+        code_expiry_minutes = 0
+    else:
+        code_expiry_days, code_expiry_hours, code_expiry_minutes = parse_duration_text(update.message.text)
+        if code_expiry_days is None:
+            await update.message.reply_text("```\n❌ Format tidak valid!\nGunakan: 1 jam, 2 menit, 1 hari, dll\n```", parse_mode="Markdown")
+            return ASK_CODE_EXPIRY
     
     code = context.user_data.get('redeem_code')
     role = context.user_data.get('redeem_role')
     user_duration = context.user_data.get('redeem_user_duration')
+    duration_display = context.user_data.get('redeem_user_duration_display', format_duration_readable(user_duration))
     
     try:
         with open("redeem.json", "r") as f:
@@ -379,12 +406,17 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
     except FileNotFoundError:
         redeem_codes = {}
     
-    code_expired = code_expiry_days if code_expiry_days > 0 else 0
+    # Calculate code expiry datetime
+    if code_expiry_days > 0 or code_expiry_hours > 0 or code_expiry_minutes > 0:
+        code_expiry_dt = datetime.now() + timedelta(days=code_expiry_days, hours=code_expiry_hours, minutes=code_expiry_minutes)
+        code_expired_str = code_expiry_dt.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        code_expired_str = None
     
     redeem_codes[code] = {
         "role": role,
         "duration_days": user_duration,
-        "code_expired": code_expired,
+        "code_expired": code_expired_str,
         "used": False,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
@@ -399,8 +431,8 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
         [KeyboardButton("🔙 KEMBALI")]
     ], resize_keyboard=True)
     
-    duration_readable = format_duration_readable(user_duration)
-    code_expiry_readable = format_code_expiry_readable(code_expiry_days)
+    duration_readable = duration_display
+    code_expiry_readable = format_code_expiry_readable(code_expiry_days, code_expiry_hours, code_expiry_minutes)
     
     active_until = (datetime.now() + timedelta(days=user_duration)).strftime("%d-%m-%Y %H:%M:%S")
     
