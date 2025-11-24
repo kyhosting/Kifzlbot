@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
@@ -86,18 +86,32 @@ Saya siap bantu convert file & management kontak.
 ───────────────────────────────────────
 ```"""
     
-    keyboard = get_main_menu_keyboard(user_id)
+    keyboard_main = get_main_menu_keyboard(user_id)
+    
+    verify_keyboard = [
+        [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")]
+    ]
+    verify_markup = InlineKeyboardMarkup(verify_keyboard)
     
     try:
         photos = await user.get_profile_photos(limit=1)
-        if photos.total_count > 0:
-            await update.message.reply_photo(
-                photo=photos.photos[0][0].file_id,
-                caption=text,
-                parse_mode="Markdown",
-                reply_markup=keyboard
-            )
+        if photos.total_count > 0 and photos.photos:
+            try:
+                await update.message.reply_photo(
+                    photo=photos.photos[0][0].file_id,
+                    caption=text,
+                    parse_mode="Markdown"
+                )
+                await update.message.reply_text("", reply_markup=keyboard_main)
+            except Exception as photo_error:
+                await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
         else:
-            await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
-    except:
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+            await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
+        
+        await update.message.reply_text(
+            "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
+            parse_mode="Markdown",
+            reply_markup=verify_markup
+        )
+    except Exception as e:
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
