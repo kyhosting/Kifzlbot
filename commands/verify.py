@@ -51,7 +51,8 @@ Nikmati semua fitur premium bot kami.
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    await query.edit_message_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    await query.edit_message_text(text,
+                parse_mode="Markdown", reply_markup=reply_markup)
 
 async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -61,7 +62,8 @@ async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE)
     keyboard = get_main_menu_keyboard(query.from_user.id)
     
     await query.message.reply_text("")
-    await send_with_banner(query.from_user, context, "```\n🎌 Silakan pilih menu di bawah\n```", parse_mode="Markdown", reply_markup=keyboard)
+    await query.message.reply_text("```\n🎌 Silakan pilih menu di bawah\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
 
 async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member_update = update.my_chat_member
@@ -89,6 +91,7 @@ mendapatkan akses VIP gratis 1 minggu!
         reply_markup = InlineKeyboardMarkup(keyboard)
         
         try:
-            await user.send_message(text, parse_mode="Markdown", reply_markup=reply_markup)
+            await user.send_message(text,
+                parse_mode="Markdown", reply_markup=reply_markup)
         except:
             pass

@@ -31,13 +31,15 @@ Pilih aksi yang ingin dilakukan:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
 async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "🔙 KEMBALI":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n🔙 Kembali ke menu utama\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text("```\n🔙 Kembali ke menu utama\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     action = update.message.text
@@ -101,7 +103,8 @@ Contoh: VIP2024
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_REDEEM_CODE
     
     elif action == "➕ TAMBAH USER" or action == "✏️ EDIT USER":
@@ -117,7 +120,8 @@ Masukkan User ID Telegram
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_USER_ID
     
     return ASK_ACTION
@@ -148,7 +152,8 @@ Pilih role untuk user:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=role_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=role_keyboard)
     return ASK_ROLE
 
 async def menu_owner_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -179,7 +184,8 @@ Ketik 0 untuk permanent/FREE
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_DURATION
 
 async def menu_owner_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -229,7 +235,8 @@ Expired  : {expired.strftime("%d-%m-%Y") if expired else "Permanent"}
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
 async def menu_owner_redeem_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -253,7 +260,8 @@ Pilih role untuk redeem code:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=role_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=role_keyboard)
     return ASK_REDEEM_ROLE
 
 async def menu_owner_redeem_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -281,7 +289,8 @@ Contoh: 7
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_REDEEM_DURATION
 
 async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -331,5 +340,6 @@ Durasi   : {duration} hari
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION

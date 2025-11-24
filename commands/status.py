@@ -89,4 +89,5 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = get_main_menu_keyboard(user_id)
     
-    await send_with_banner(update, context, status_info, parse_mode="Markdown", reply_markup=keyboard)
+    await update.message.reply_text(status_info,
+                parse_mode="Markdown", reply_markup=keyboard)
