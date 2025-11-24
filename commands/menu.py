@@ -50,4 +50,13 @@ Pilih menu yang tersedia di bawah ini:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+    try:
+        with open("bot_banner.jpg", "rb") as banner:
+            await update.message.reply_photo(
+                photo=banner,
+                caption=text,
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+    except:
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
