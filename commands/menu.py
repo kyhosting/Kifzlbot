@@ -26,8 +26,8 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = get_main_menu_keyboard(user_id)
     
     text = """```
-🎌  KIFZL DEV CV BOTS  
-(BY KIFZL DEV)
+🎌  KIFZL DEV BOT  
+(BY @KIFZLDEV)
 ───────────────────────────────────────
 
 Pilih menu yang tersedia di bawah ini:
