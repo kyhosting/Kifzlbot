@@ -26,14 +26,14 @@ Anda ubah menjadi file .txt
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_MESSAGE
 
 async def msg_to_txt_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -53,14 +53,14 @@ Contoh: kontak_saya
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
