@@ -91,8 +91,8 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
-    # Send banner with text together
-    await send_with_banner(update, context, text, keyboard_main)
+    # Send text with menu
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
     
     if not is_owner and not is_verified and role == "FREE":
         verify_keyboard = [
