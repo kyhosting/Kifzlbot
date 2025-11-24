@@ -27,8 +27,7 @@ Anda dapat memperoleh akses VIP melalui:
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=reply_markup)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query

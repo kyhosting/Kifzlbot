@@ -26,8 +26,7 @@ Anda ubah menjadi file .txt
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_MESSAGE
 
 async def msg_to_txt_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -53,8 +52,7 @@ Contoh: kontak_saya
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):

@@ -45,8 +45,7 @@ nomor telepon untuk dikonversi ke .vcf
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def xls_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -104,8 +103,7 @@ Contoh: kontak
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_FILENAME
         
     except Exception as e:
@@ -142,8 +140,7 @@ Hasil: kontak 0001, kontak 0002, ...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def xls_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_TYPE):

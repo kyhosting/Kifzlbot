@@ -33,8 +33,7 @@ untuk mendapatkan akses VIP/PREMIUM
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CODE
 
 async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -91,6 +90,5 @@ Selamat menikmati akses {role}!
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
     return ConversationHandler.END

@@ -51,5 +51,4 @@ Pilih menu yang tersedia di bawah ini:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)

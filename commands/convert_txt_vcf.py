@@ -43,8 +43,7 @@ untuk dikonversi menjadi file .vcf
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def txt_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -97,8 +96,7 @@ Contoh: kontak
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def txt_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -127,8 +125,7 @@ Hasil: kontak 0001, kontak 0002, ...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown",
-                parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def txt_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_TYPE):
