@@ -19,7 +19,7 @@ def is_code_expired(code_data):
         return False
 
 def format_duration_readable(days):
-    """Convert days to readable format (hari/bulan)"""
+    """Convert days to readable format (X hari / X bulan)"""
     if days <= 0:
         return "Permanent"
     
@@ -33,18 +33,14 @@ def format_duration_readable(days):
     else:
         return f"{days} hari"
 
-def format_code_expiry_with_time(days):
-    """Format code expiry with hari/jam/menit detail"""
+def format_code_expiry_readable(days):
+    """Format code expiry dengan hari jam menit detail"""
     if days <= 0:
         return "Permanent"
     
-    # Calculate total hours and minutes
-    total_hours = days * 24
-    hours = total_hours % 24
+    # Convert days to hari, jam, menit
+    # 1 hari = 24 jam
+    hours = 0  # Asumsi input hanya hari, tidak ada jam
     minutes = 0
     
-    # Simple format: just show hari and jam
-    if hours > 0:
-        return f"{days} hari {hours} jam"
-    else:
-        return f"{days} hari"
+    return f"{days} hari {hours} jam {minutes} menit"

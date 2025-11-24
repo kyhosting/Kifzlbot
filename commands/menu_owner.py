@@ -5,7 +5,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import OWNER_ID, load_users, save_users
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
-from commands.redeem_utils import generate_random_code, format_duration_readable, format_code_expiry_with_time
+from commands.redeem_utils import generate_random_code, format_duration_readable, format_code_expiry_readable
 
 ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(8)
 
@@ -379,7 +379,7 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
     except FileNotFoundError:
         redeem_codes = {}
     
-    code_expired = format_expired_date(code_expiry_days) if code_expiry_days > 0 else None
+    code_expired = code_expiry_days if code_expiry_days > 0 else 0
     
     redeem_codes[code] = {
         "role": role,
@@ -400,7 +400,7 @@ async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_T
     ], resize_keyboard=True)
     
     duration_readable = format_duration_readable(user_duration)
-    code_expiry_readable = format_code_expiry_with_time(code_expiry_days)
+    code_expiry_readable = format_code_expiry_readable(code_expiry_days)
     
     active_until = (datetime.now() + timedelta(days=user_duration)).strftime("%d-%m-%Y %H:%M:%S")
     
