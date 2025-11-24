@@ -89,7 +89,7 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
-    await send_with_banner(update, context, text, keyboard_main)
+    await send_with_banner(update, context, text, keyboard_main, parse_mode=None)
     
     if not is_owner and not is_verified and role == "FREE":
         verify_keyboard = [
@@ -101,7 +101,6 @@ Saya siap bantu convert file & management kontak.
         ]
         verify_markup = InlineKeyboardMarkup(verify_keyboard)
         await update.message.reply_text(
-            "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
-            parse_mode="Markdown",
+            "✨ Silakan tekan tombol di bawah untuk verifikasi",
             reply_markup=verify_markup
         )
