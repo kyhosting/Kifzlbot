@@ -4,6 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 ASK_FILE, ASK_FILENAME, ASK_CONTACTNAME = range(3)
 
@@ -45,13 +46,13 @@ nomor telepon untuk dikonversi ke .vcf
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILE
 
 async def xls_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
@@ -79,7 +80,7 @@ async def xls_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not phone_numbers:
             os.remove(filepath)
             keyboard = get_main_menu_keyboard(update.effective_user.id)
-            await update.message.reply_text("```\n❌ Tidak ada nomor telepon ditemukan!\n```", parse_mode="Markdown", reply_markup=keyboard)
+            await send_with_banner(update, context, "```\n❌ Tidak ada nomor telepon ditemukan!\n```", keyboard)
             return ConversationHandler.END
         
         context.user_data['phone_numbers'] = phone_numbers
@@ -101,14 +102,14 @@ Contoh: kontak
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         return ASK_FILENAME
         
     except Exception as e:
         if os.path.exists(filepath):
             os.remove(filepath)
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text(f"```\n❌ Error reading Excel: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, f"```\n❌ Error reading Excel: {str(e)}\n```", keyboard)
         return ConversationHandler.END
 
 async def xls_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -116,7 +117,7 @@ async def xls_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE
         if 'xls_filepath' in context.user_data and os.path.exists(context.user_data['xls_filepath']):
             os.remove(context.user_data['xls_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     context.user_data['vcf_filename'] = update.message.text.strip()
@@ -136,7 +137,7 @@ Hasil: kontak 0001, kontak 0002, ...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def xls_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -144,7 +145,7 @@ async def xls_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         if 'xls_filepath' in context.user_data and os.path.exists(context.user_data['xls_filepath']):
             os.remove(context.user_data['xls_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     contact_name = update.message.text.strip()
@@ -171,7 +172,7 @@ async def xls_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
     finally:
         if 'xls_filepath' in context.user_data and os.path.exists(context.user_data['xls_filepath']):
             os.remove(context.user_data['xls_filepath'])

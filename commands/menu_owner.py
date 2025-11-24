@@ -4,6 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import OWNER_ID, load_users, save_users
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_CODE, ASK_REDEEM_ROLE, ASK_REDEEM_DURATION = range(7)
 
@@ -30,13 +31,13 @@ Pilih aksi yang ingin dilakukan:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
+    await send_with_banner(update, context, text, action_keyboard)
     return ASK_ACTION
 
 async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "🔙 KEMBALI":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n🔙 Kembali ke menu utama\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n🔙 Kembali ke menu utama\n```", keyboard)
         return ConversationHandler.END
     
     action = update.message.text

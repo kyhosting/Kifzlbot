@@ -4,6 +4,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 ASK_MODE, ASK_ADMIN_NUM, ASK_NAVY_NUM, ASK_FILENAME, ASK_CONTACTNAME, ASK_BLOCK_INPUT = range(6)
 
@@ -54,13 +55,13 @@ Input satu nomor minimal
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=mode_keyboard)
+    await send_with_banner(update, context, text, mode_keyboard)
     return ASK_MODE
 
 async def create_admin_navy_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     mode = update.message.text
@@ -84,7 +85,7 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         return ASK_ADMIN_NUM
         
     elif mode == "MODE B - AUTO PARSE":
@@ -107,7 +108,7 @@ Bot akan parse otomatis!
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         return ASK_BLOCK_INPUT
         
     elif mode == "MODE C - MINIMAL":
@@ -125,7 +126,7 @@ Kirim 1 nomor telepon
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         return ASK_ADMIN_NUM
     
     else:
@@ -135,7 +136,7 @@ Kirim 1 nomor telepon
 async def create_admin_navy_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     admin_numbers = update.message.text.strip().split('\n')
@@ -159,7 +160,7 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        await send_with_banner(update, context, text, cancel_keyboard)
         context.user_data['navy_numbers'] = []
         return ASK_FILENAME
     
@@ -175,13 +176,13 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_NAVY_NUM
 
 async def create_admin_navy_navy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     navy_numbers = update.message.text.strip().split('\n')
@@ -202,13 +203,13 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILENAME
 
 async def create_admin_navy_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     context.user_data['vcf_filename'] = update.message.text.strip()
@@ -227,13 +228,13 @@ Hasil: admin 01, navy 01
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     contact_format = update.message.text.strip()
@@ -273,7 +274,7 @@ async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAU
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
     finally:
         if os.path.exists(vcf_filepath):
             os.remove(vcf_filepath)
@@ -283,7 +284,7 @@ async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAU
 async def create_admin_navy_block(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
         return ConversationHandler.END
     
     block_text = update.message.text.strip()
@@ -328,5 +329,5 @@ Masukkan nama file output
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await send_with_banner(update, context, text, cancel_keyboard)
     return ASK_FILENAME
