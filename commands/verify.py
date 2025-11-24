@@ -10,6 +10,13 @@ async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_T
     user_id = query.from_user.id
     user = query.from_user
     
+    if user_id == OWNER_ID:
+        await query.edit_message_text(
+            "```\n👑 Anda adalah OWNER, verifikasi tidak diperlukan.\n```",
+            parse_mode="Markdown"
+        )
+        return
+    
     expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
     
     update_user_data(user_id, {
@@ -82,6 +89,9 @@ async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if chat_member_update.new_chat_member.status == ChatMember.MEMBER:
         user = chat_member_update.from_user
         user_id = user.id
+        
+        if user_id == OWNER_ID:
+            return
         
         text = f"""```
 🎉 SELAMAT BERGABUNG!

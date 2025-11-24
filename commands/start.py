@@ -87,15 +87,7 @@ Saya siap bantu convert file & management kontak.
 ```"""
     
     keyboard_main = get_main_menu_keyboard(user_id)
-    
-    verify_keyboard = [
-        [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
-        [
-            InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
-            InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
-        ]
-    ]
-    verify_markup = InlineKeyboardMarkup(verify_keyboard)
+    is_owner = (user_id == OWNER_ID)
     
     try:
         photos = await user.get_profile_photos(limit=1)
@@ -112,10 +104,19 @@ Saya siap bantu convert file & management kontak.
         else:
             await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
         
-        await update.message.reply_text(
-            "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
-            parse_mode="Markdown",
-            reply_markup=verify_markup
-        )
+        if not is_owner:
+            verify_keyboard = [
+                [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
+                [
+                    InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
+                    InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
+                ]
+            ]
+            verify_markup = InlineKeyboardMarkup(verify_keyboard)
+            await update.message.reply_text(
+                "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
+                parse_mode="Markdown",
+                reply_markup=verify_markup
+            )
     except Exception as e:
         await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
