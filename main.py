@@ -57,6 +57,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Suppress httpx INFO logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("telegram").setLevel(logging.WARNING)
+
 def ensure_json_files():
     files = ["users.json", "redeem.json", "sessions.json", "admins.json"]
     for file in files:
