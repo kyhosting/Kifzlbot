@@ -2,7 +2,6 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatMem
 from telegram.ext import ContextTypes
 from datetime import datetime, timedelta
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
-from commands.banner_helper import send_with_banner
 
 async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
