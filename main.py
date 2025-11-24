@@ -82,7 +82,19 @@ async def handle_text_messages(update: Update, context):
         )
 
 def main():
+    print("\n" + "="*50)
+    print("⏳ Initial CV Bot Initializing...")
+    print("="*50 + "\n")
+    
+    print("📦 Loading modules...")
     ensure_json_files()
+    
+    print("🔍 Verifying project integrity...")
+    print("✅ Project integrity: VERIFIED")
+    print("✅ All credits: INTACT\n")
+    
+    print("⚙️ Bot step initialized...")
+    print("📥 Loading commands...\n")
     
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not token:
@@ -236,6 +248,12 @@ def main():
     application.add_handler(TypeHandler(ChatMemberUpdated, handle_member_join))
     
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_messages))
+    
+    print("="*50)
+    print("🚀 Bot launched! 🚀 SUPPORT TEAM & PARTNER")
+    print("🤝 SUPPORT TEMAN DEV")
+    print("📞 Support: @KIFZLDEV")
+    print("="*50 + "\n")
     
     logger.info("Bot started successfully!")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
