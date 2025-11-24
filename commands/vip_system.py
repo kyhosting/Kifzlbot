@@ -76,7 +76,7 @@ mendapatkan akses:
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=reply_markup)
 
 def get_user_data(user_id):

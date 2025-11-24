@@ -43,23 +43,23 @@ untuk dikonversi menjadi file .vcf
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def txt_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
-        await update.message.reply_text("```\n❌ Kirim file .txt!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Kirim file .txt!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     if not update.message.document.file_name.endswith('.txt'):
-        await update.message.reply_text("```\n❌ File harus berformat .txt!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ File harus berformat .txt!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     file = await update.message.document.get_file()
@@ -74,7 +74,7 @@ async def txt_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not numbers:
         os.remove(filepath)
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Tidak ada nomor ditemukan!\n```",
+        await update.message.reply_text("""```\n❌ Tidak ada nomor ditemukan!\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -97,7 +97,7 @@ Contoh: kontak
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
@@ -106,7 +106,7 @@ async def txt_to_vcf_filename(update: Update, context: ContextTypes.DEFAULT_TYPE
         if 'txt_filepath' in context.user_data and os.path.exists(context.user_data['txt_filepath']):
             os.remove(context.user_data['txt_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -127,7 +127,7 @@ Hasil: kontak 0001, kontak 0002, ...
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACTNAME
 
@@ -136,7 +136,7 @@ async def txt_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         if 'txt_filepath' in context.user_data and os.path.exists(context.user_data['txt_filepath']):
             os.remove(context.user_data['txt_filepath'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     

@@ -54,14 +54,14 @@ Input satu nomor minimal
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=mode_keyboard)
     return ASK_MODE
 
 async def create_admin_navy_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -86,7 +86,7 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_ADMIN_NUM
         
@@ -110,7 +110,7 @@ Bot akan parse otomatis!
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_BLOCK_INPUT
         
@@ -129,18 +129,18 @@ Kirim 1 nomor telepon
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_ADMIN_NUM
     
     else:
-        await update.message.reply_text("```\n❌ Pilih mode yang valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Pilih mode yang valid!\n```", parse_mode="Markdown")
         return ASK_MODE
 
 async def create_admin_navy_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -165,7 +165,7 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         context.user_data['navy_numbers'] = []
         return ASK_FILENAME
@@ -182,14 +182,14 @@ Bisa kirim beberapa nomor dengan enter
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_NAVY_NUM
 
 async def create_admin_navy_navy(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -211,14 +211,14 @@ Contoh: ADMIN DAN NAVY
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME
 
 async def create_admin_navy_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -238,14 +238,14 @@ Hasil: admin 01, navy 01
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACTNAME
 
 async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -296,7 +296,7 @@ async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAU
 async def create_admin_navy_block(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -320,7 +320,7 @@ async def create_admin_navy_block(update: Update, context: ContextTypes.DEFAULT_
                 navy_numbers.append(line)
     
     if not admin_numbers and not navy_numbers:
-        await update.message.reply_text("```\n❌ Tidak ada nomor valid ditemukan!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Tidak ada nomor valid ditemukan!\n```", parse_mode="Markdown")
         return ASK_BLOCK_INPUT
     
     context.user_data['admin_numbers'] = admin_numbers
@@ -342,6 +342,6 @@ Masukkan nama file output
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILENAME

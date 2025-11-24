@@ -10,7 +10,7 @@ ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_CODE, ASK_REDEEM_ROL
 
 async def menu_owner_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
-        await update.message.reply_text("```\n❌ Anda bukan owner!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Anda bukan owner!\n```", parse_mode="Markdown")
         return ConversationHandler.END
     
     action_keyboard = ReplyKeyboardMarkup([
@@ -31,14 +31,14 @@ Pilih aksi yang ingin dilakukan:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
 async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "🔙 KEMBALI":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("```\n🔙 Kembali ke menu utama\n```",
+        await update.message.reply_text("""```\n🔙 Kembali ke menu utama\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -48,7 +48,7 @@ async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
         users = load_users()
         
         if not users:
-            await update.message.reply_text("```\n❌ Belum ada user terdaftar\n```", parse_mode="Markdown")
+            await update.message.reply_text("""```\n❌ Belum ada user terdaftar\n```", parse_mode="Markdown")
             return ASK_ACTION
         
         user_list = []
@@ -103,7 +103,7 @@ Contoh: VIP2024
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_REDEEM_CODE
     
@@ -120,7 +120,7 @@ Masukkan User ID Telegram
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text,
+        await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
         return ASK_USER_ID
     
@@ -134,7 +134,7 @@ async def menu_owner_user_id(update: Update, context: ContextTypes.DEFAULT_TYPE)
         user_id = int(update.message.text.strip())
         context.user_data['target_user_id'] = user_id
     except:
-        await update.message.reply_text("```\n❌ User ID harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ User ID harus angka!\n```", parse_mode="Markdown")
         return ASK_USER_ID
     
     role_keyboard = ReplyKeyboardMarkup([
@@ -152,7 +152,7 @@ Pilih role untuk user:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=role_keyboard)
     return ASK_ROLE
 
@@ -162,7 +162,7 @@ async def menu_owner_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     role = update.message.text
     if role not in ["FREE", "VIP", "PREMIUM"]:
-        await update.message.reply_text("```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
         return ASK_ROLE
     
     context.user_data['target_role'] = role
@@ -184,7 +184,7 @@ Ketik 0 untuk permanent/FREE
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_DURATION
 
@@ -195,7 +195,7 @@ async def menu_owner_duration(update: Update, context: ContextTypes.DEFAULT_TYPE
     try:
         duration = int(update.message.text.strip())
     except:
-        await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
         return ASK_DURATION
     
     user_id = context.user_data.get('target_user_id')
@@ -235,7 +235,7 @@ Expired  : {expired.strftime("%d-%m-%Y") if expired else "Permanent"}
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
@@ -260,7 +260,7 @@ Pilih role untuk redeem code:
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=role_keyboard)
     return ASK_REDEEM_ROLE
 
@@ -270,7 +270,7 @@ async def menu_owner_redeem_role(update: Update, context: ContextTypes.DEFAULT_T
     
     role = update.message.text
     if role not in ["VIP", "PREMIUM"]:
-        await update.message.reply_text("```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
         return ASK_REDEEM_ROLE
     
     context.user_data['redeem_role'] = role
@@ -289,7 +289,7 @@ Contoh: 7
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_REDEEM_DURATION
 
@@ -300,7 +300,7 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
     try:
         duration = int(update.message.text.strip())
     except:
-        await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("""```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
         return ASK_REDEEM_DURATION
     
     code = context.user_data.get('redeem_code')
@@ -340,6 +340,6 @@ Durasi   : {duration} hari
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text,
+    await update.message.reply_text(text, parse_mode="Markdown",
                 parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
