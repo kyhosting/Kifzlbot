@@ -5,8 +5,9 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import OWNER_ID, load_users, save_users
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
+from commands.redeem_utils import generate_random_code, format_expired_date
 
-ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_CODE, ASK_REDEEM_ROLE, ASK_REDEEM_DURATION = range(7)
+ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_ROLE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(9)
 
 async def menu_owner_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
@@ -88,22 +89,25 @@ OWNER        : 1
         return ASK_ACTION
     
     elif action == "🎁 BUAT REDEEM":
-        cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
+        mode_keyboard = ReplyKeyboardMarkup([
+            [KeyboardButton("🎲 RANDOM"), KeyboardButton("✍️ CUSTOM")],
+            [KeyboardButton("❌ BATAL ❌")]
+        ], resize_keyboard=True)
         
         text = """```
 🎁 BUAT REDEEM CODE
 ───────────────────────────────────────
 
-Masukkan kode redeem yang ingin dibuat
-(huruf kapital & angka)
+Pilih cara membuat kode redeem:
 
-Contoh: VIP2024
+🎲 RANDOM - Bot generate otomatis
+✍️ CUSTOM - Ketik sendiri
 
 ───────────────────────────────────────
 ```"""
         
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
-        return ASK_REDEEM_CODE
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=mode_keyboard)
+        return ASK_REDEEM_MODE
     
     elif action == "➕ TAMBAH USER" or action == "✏️ EDIT USER":
         context.user_data['owner_action'] = action
@@ -233,6 +237,66 @@ Expired  : {expired.strftime("%d-%m-%Y") if expired else "Permanent"}
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
+async def menu_owner_redeem_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.text == "❌ BATAL ❌":
+        return await menu_owner_start(update, context)
+    
+    mode = update.message.text
+    context.user_data['redeem_mode'] = mode
+    
+    if mode == "🎲 RANDOM":
+        # Generate random code
+        code = generate_random_code()
+        context.user_data['redeem_code'] = code
+        
+        text = f"""```
+🎲 RANDOM CODE GENERATED
+───────────────────────────────────────
+
+Kode Generated:
+{code}
+
+───────────────────────────────────────
+```"""
+        
+        await update.message.reply_text(text, parse_mode="Markdown")
+        
+        # Continue to role selection
+        role_keyboard = ReplyKeyboardMarkup([
+            [KeyboardButton("VIP"), KeyboardButton("PREMIUM")],
+            [KeyboardButton("❌ BATAL ❌")]
+        ], resize_keyboard=True)
+        
+        text = """```
+🎭 ROLE REDEEM
+───────────────────────────────────────
+
+Pilih role untuk redeem code:
+
+───────────────────────────────────────
+```"""
+        
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=role_keyboard)
+        return ASK_REDEEM_ROLE
+    
+    else:  # CUSTOM
+        cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
+        
+        text = """```
+✍️ BUAT KODE CUSTOM
+───────────────────────────────────────
+
+Masukkan kode redeem yang ingin dibuat
+(huruf kapital & angka)
+
+Contoh: VIP2024
+
+───────────────────────────────────────
+```"""
+        
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+        return ASK_REDEEM_CODE
+
 async def menu_owner_redeem_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         return await menu_owner_start(update, context)
@@ -295,8 +359,40 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
         await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
         return ASK_REDEEM_DURATION
     
+    context.user_data['redeem_user_duration'] = duration
+    
+    cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
+    
+    text = """```
+⏰ EXPIRED KODE REDEEM
+───────────────────────────────────────
+
+Berapa hari kode ini berlaku?
+
+Contoh: 30
+(kode berlaku 30 hari dari sekarang)
+
+Ketik 0 untuk permanent (tidak expires)
+
+───────────────────────────────────────
+```"""
+    
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    return ASK_CODE_EXPIRY
+
+async def menu_owner_code_expiry(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.text == "❌ BATAL ❌":
+        return await menu_owner_start(update, context)
+    
+    try:
+        code_expiry_days = int(update.message.text.strip())
+    except:
+        await update.message.reply_text("```\n❌ Nilai harus angka!\n```", parse_mode="Markdown")
+        return ASK_CODE_EXPIRY
+    
     code = context.user_data.get('redeem_code')
     role = context.user_data.get('redeem_role')
+    user_duration = context.user_data.get('redeem_user_duration')
     
     try:
         with open("redeem.json", "r") as f:
@@ -304,9 +400,12 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
     except FileNotFoundError:
         redeem_codes = {}
     
+    code_expired = format_expired_date(code_expiry_days) if code_expiry_days > 0 else None
+    
     redeem_codes[code] = {
         "role": role,
-        "duration_days": duration,
+        "duration_days": user_duration,
+        "code_expired": code_expired,
         "used": False,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
@@ -325,9 +424,10 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
 ✅ REDEEM CODE DIBUAT
 ───────────────────────────────────────
 
-Kode     : {code}
-Role     : {role}
-Durasi   : {duration} hari
+Kode         : {code}
+Role         : {role}
+Durasi User  : {user_duration} hari
+Kode Expired : {code_expired if code_expired else "Permanent"}
 
 ───────────────────────────────────────
 ```"""

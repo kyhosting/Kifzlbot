@@ -6,6 +6,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
+from commands.redeem_utils import is_code_expired
 
 ASK_CODE = range(1)
 
@@ -55,6 +56,12 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     code_data = redeem_codes[code]
     
+    # Check if code itself has expired
+    if is_code_expired(code_data):
+        await update.message.reply_text("```\n❌ Kode redeem sudah expired!\n❌ Hubungi owner untuk kode baru\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
+        return ConversationHandler.END
+    
     if code_data.get("used", False):
         await update.message.reply_text("```\n❌ Kode redeem sudah digunakan!\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
@@ -65,9 +72,12 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     expired = datetime.now() + timedelta(days=duration_days)
     
-    update_user_data(update.effective_user.id, {
+    user_id = update.effective_user.id
+    
+    update_user_data(user_id, {
         "role": role,
-        "expired": expired
+        "expired": expired.strftime("%Y-%m-%d %H:%M:%S"),
+        "redeemed_code": code
     })
     
     code_data["used"] = True
