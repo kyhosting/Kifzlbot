@@ -61,7 +61,7 @@ async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE)
     keyboard = get_main_menu_keyboard(query.from_user.id)
     
     await query.message.reply_text("")
-    await send_with_banner(query.from_user, context, "```\n🎌 Silakan pilih menu di bawah\n```", keyboard)
+    await send_with_banner(query.from_user, context, "```\n🎌 Silakan pilih menu di bawah\n```", parse_mode="Markdown", reply_markup=keyboard)
 
 async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member_update = update.my_chat_member

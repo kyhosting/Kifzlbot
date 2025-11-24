@@ -28,13 +28,13 @@ daftar nama kontak
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def cek_nama_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
@@ -80,10 +80,10 @@ Total: {len(vcard_list)} kontak
 ───────────────────────────────────────
 ```"""
         
-        await send_with_banner(update, context, text, keyboard)
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
         
     except Exception as e:
-        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
+        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
     finally:
         if os.path.exists(filepath):
             os.remove(filepath)

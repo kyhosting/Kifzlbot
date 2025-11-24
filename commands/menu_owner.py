@@ -31,13 +31,13 @@ Pilih aksi yang ingin dilakukan:
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, action_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=action_keyboard)
     return ASK_ACTION
 
 async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "🔙 KEMBALI":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n🔙 Kembali ke menu utama\n```", keyboard)
+        await send_with_banner(update, context, "```\n🔙 Kembali ke menu utama\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     action = update.message.text

@@ -52,13 +52,13 @@ dipecah menjadi beberapa file
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def split_file_receive(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
@@ -94,7 +94,7 @@ Hasil: kontak1, kontak2, kontak3...
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_OUTPUT_NAME
 
 async def split_file_output_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -102,7 +102,7 @@ async def split_file_output_name(update: Update, context: ContextTypes.DEFAULT_T
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     context.user_data['output_name'] = update.message.text.strip()
@@ -121,7 +121,7 @@ Hasil: kontak1, kontak2, kontak3...
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE_PREFIX
 
 async def split_file_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -129,7 +129,7 @@ async def split_file_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
@@ -153,7 +153,7 @@ Hasil: kontak 01, kontak 02, kontak 03...
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CONTACT_PREFIX
 
 async def split_contact_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -161,7 +161,7 @@ async def split_contact_prefix(update: Update, context: ContextTypes.DEFAULT_TYP
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
@@ -190,7 +190,7 @@ PER BAGIAN: Bagi file menjadi X bagian
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, mode_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=mode_keyboard)
     return ASK_SPLIT_MODE
 
 async def split_mode_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -198,7 +198,7 @@ async def split_mode_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     mode = update.message.text
@@ -236,7 +236,7 @@ Contoh: 5
 ───────────────────────────────────────
 ```"""
     
-    await send_with_banner(update, context, text, cancel_keyboard)
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_SPLIT_VALUE
 
 async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -244,7 +244,7 @@ async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", keyboard)
+        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
@@ -324,14 +324,14 @@ async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 filename=os.path.basename(output_file).replace(f"temp_{update.effective_user.id}_", "")
             )
         
-        await send_with_banner(update, context, f"✅ Berhasil split!\n📂 Total: {len(output_files)} file\n📁 Nama: {output_name}", keyboard)
+        await update.message.reply_text(f"✅ Berhasil split!\n📂 Total: {len(output_files)} file\n📁 Nama: {output_name}", reply_markup=keyboard)
         
         user_data = get_user_data(update.effective_user.id)
         total_ops = user_data.get("total_operations", 0) + 1
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await send_with_banner(update, context, f"```\n❌ Error: {str(e)}\n```", keyboard)
+        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", reply_markup=keyboard)
     finally:
         if os.path.exists(filepath):
             os.remove(filepath)
