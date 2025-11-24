@@ -1,7 +1,6 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes
 from commands.vip_system import get_user_role, OWNER_ID
-from commands.banner_helper import send_with_banner
 
 def get_main_menu_keyboard(user_id):
     is_owner = (user_id == OWNER_ID)
