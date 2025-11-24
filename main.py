@@ -87,7 +87,7 @@ async def handle_text_messages(update: Update, context):
 
 def main():
     print("\n" + "="*50)
-    print("⏳ Initial CV Bot Initializing...")
+    print("⏳ Initial KIFZL DEV BOT Initializing...")
     print("="*50 + "\n")
     
     print("📦 Loading modules...")
