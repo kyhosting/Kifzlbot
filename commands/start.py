@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update
 from telegram.ext import ContextTypes
 from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
@@ -45,7 +45,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     total_ops = user_data.get("total_operations", 0)
     
-    text = f"""🎌  KIFZL DEV CV BOTS  
+    text = f"""```
+🎌  KIFZL DEV CV BOTS  
 (BY KIFZL DEV)
 ───────────────────────────────────────
 
@@ -82,24 +83,21 @@ Saya siap bantu convert file & management kontak.
 🎁 REDEEM CODE          — Aktivasi  
 🜲 MENU OWNER           — Khusus owner  
 
-───────────────────────────────────────"""
+───────────────────────────────────────
+```"""
     
-    keyboard_main = get_main_menu_keyboard(user_id)
-    is_owner = (user_id == OWNER_ID)
-    is_verified = role in ["VIP", "PREMIUM"]
+    keyboard = get_main_menu_keyboard(user_id)
     
-    await update.message.reply_text(text, parse_mode="HTML", reply_markup=keyboard_main)
-    
-    if not is_owner and not is_verified and role == "FREE":
-        verify_keyboard = [
-            [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
-            [
-                InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
-                InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
-            ]
-        ]
-        verify_markup = InlineKeyboardMarkup(verify_keyboard)
-        await update.message.reply_text(
-            "✨ Silakan tekan tombol di bawah untuk verifikasi",
-            reply_markup=verify_markup
-        )
+    try:
+        photos = await user.get_profile_photos(limit=1)
+        if photos.total_count > 0:
+            await update.message.reply_photo(
+                photo=photos.photos[0][0].file_id,
+                caption=text,
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+        else:
+            await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+    except:
+        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
