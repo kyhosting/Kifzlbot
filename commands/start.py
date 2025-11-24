@@ -46,8 +46,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total_ops = user_data.get("total_operations", 0)
     
     text = f"""```
-🎌  KIFZL DEV CV BOTS  
-(BY KIFZL DEV)
+🎌  KIFZL DEV BOT  
+(BY @KIFZLDEV)
 ───────────────────────────────────────
 
 "KONNICHIWA, WATASHI WA KIFZL_BOT DESU"
