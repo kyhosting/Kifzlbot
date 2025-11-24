@@ -96,8 +96,8 @@ Saya siap bantu convert file & management kontak.
     except:
         pass
     
-    # Send text with menu
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
+    # Send text with menu (no parse_mode to avoid markdown parsing errors)
+    await update.message.reply_text(text, reply_markup=keyboard_main)
     
     if not is_owner and not is_verified and role == "FREE":
         verify_keyboard = [

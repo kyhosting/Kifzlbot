@@ -92,5 +92,5 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except:
         pass
     
-    # Send status info
-    await update.message.reply_text(status_info, parse_mode="Markdown", reply_markup=keyboard)
+    # Send status info (no parse_mode to avoid markdown parsing errors)
+    await update.message.reply_text(status_info, reply_markup=keyboard)
