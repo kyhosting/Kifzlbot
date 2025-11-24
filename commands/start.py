@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes
 from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -90,27 +91,19 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
-    try:
-        await update.message.reply_photo(
-            photo=open("bot_banner.jpg", "rb"),
-            caption=text,
-            parse_mode="Markdown",
-            reply_markup=keyboard_main
-        )
-        
-        if not is_owner and not is_verified and role == "FREE":
-            verify_keyboard = [
-                [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
-                [
-                    InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
-                    InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
-                ]
+    await send_with_banner(update, context, text, keyboard_main)
+    
+    if not is_owner and not is_verified and role == "FREE":
+        verify_keyboard = [
+            [InlineKeyboardButton("✅ VERIFIKASI", callback_data="verify_user")],
+            [
+                InlineKeyboardButton("👥 JOIN GRUP 1", url="https://t.me/agentviber12"),
+                InlineKeyboardButton("👥 JOIN GRUP 2", url="https://t.me/channelviber")
             ]
-            verify_markup = InlineKeyboardMarkup(verify_keyboard)
-            await update.message.reply_text(
-                "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
-                parse_mode="Markdown",
-                reply_markup=verify_markup
-            )
-    except Exception as e:
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard_main)
+        ]
+        verify_markup = InlineKeyboardMarkup(verify_keyboard)
+        await update.message.reply_text(
+            "```\n✨ Silakan tekan tombol di bawah untuk verifikasi\n```",
+            parse_mode="Markdown",
+            reply_markup=verify_markup
+        )
