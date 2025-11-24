@@ -4,7 +4,6 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
-from commands.banner_helper import send_with_banner
 
 ASK_FILE = range(1)
 
@@ -47,13 +46,15 @@ lainnya.
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_FILE
 
 async def rapikan_txt_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
@@ -86,7 +87,8 @@ async def rapikan_txt_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         update_user_data(update.effective_user.id, {"total_operations": total_ops})
         
     except Exception as e:
-        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text(f"```\n❌ Error: {str(e)}\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
     finally:
         if os.path.exists(filepath):
             os.remove(filepath)

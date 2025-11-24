@@ -33,13 +33,15 @@ untuk mendapatkan akses VIP/PREMIUM
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=cancel_keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=cancel_keyboard)
     return ASK_CODE
 
 async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await send_with_banner(update, context, "```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     code = update.message.text.strip().upper()
@@ -48,13 +50,15 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = get_main_menu_keyboard(update.effective_user.id)
     
     if code not in redeem_codes:
-        await send_with_banner(update, context, "```\n❌ Kode redeem tidak valid!\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Kode redeem tidak valid!\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     code_data = redeem_codes[code]
     
     if code_data.get("used", False):
-        await send_with_banner(update, context, "```\n❌ Kode redeem sudah digunakan!\n```", parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Kode redeem sudah digunakan!\n```",
+                parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     role = code_data.get("role", "VIP")
@@ -87,5 +91,6 @@ Selamat menikmati akses {role}!
 ───────────────────────────────────────
 ```"""
     
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+    await update.message.reply_text(text,
+                parse_mode="Markdown", reply_markup=keyboard)
     return ConversationHandler.END

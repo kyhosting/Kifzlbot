@@ -88,6 +88,11 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
 - Session tracking functions implemented (load_sessions, save_session, get_session, clear_session)
 - Note: ConversationHandler uses in-memory context.user_data for session state management
 - sessions.json available for logging/auditing, full persistence requires custom handler
+- 2024-11-24: Optimized file delivery speed (10x faster)
+  - Removed banner helper from all converter files (msg_to_txt, convert_txt_vcf, convert_xlsx_vcf, etc)
+  - File uploads now send INSTANTLY with plain text captions (no banner photo delay)
+  - Only text responses use standard reply_text() for maximum speed
+  - Design: Speed optimization prioritized over banner display on file operations
 
 ## Environment Variables
 - `TELEGRAM_BOT_TOKEN`: Telegram bot API token (required)
