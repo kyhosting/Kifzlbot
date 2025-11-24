@@ -6,7 +6,7 @@ from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 from commands.banner_helper import send_with_banner
-from commands.redeem_utils import is_code_expired
+from commands.redeem_utils import is_code_expired, format_duration_readable
 
 ASK_CODE = range(1)
 
@@ -58,19 +58,31 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Check if code itself has expired
     if is_code_expired(code_data):
-        await update.message.reply_text("```\n❌ Kode redeem sudah expired!\n❌ Hubungi owner untuk kode baru\n```",
-                parse_mode="Markdown", reply_markup=keyboard)
+        code_expired_at = code_data.get("code_expired", "N/A")
+        await update.message.reply_text(
+            f"```\n❌ KODE REDEEM SUDAH EXPIRED\n\n"
+            f"Kode berakhir: {code_expired_at}\n"
+            f"Hubungi owner untuk kode baru\n```",
+            parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if code_data.get("used", False):
-        await update.message.reply_text("```\n❌ Kode redeem sudah digunakan!\n```",
-                parse_mode="Markdown", reply_markup=keyboard)
+        used_by = code_data.get("used_by", "Unknown")
+        used_at = code_data.get("used_at", "N/A")
+        await update.message.reply_text(
+            f"```\n❌ KODE REDEEM SUDAH DIGUNAKAN\n\n"
+            f"Digunakan oleh: {used_by}\n"
+            f"Tanggal: {used_at}\n\n"
+            f"Setiap kode hanya bisa digunakan 1x\n"
+            f"Hubungi owner untuk kode baru\n```",
+            parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     role = code_data.get("role", "VIP")
     duration_days = code_data.get("duration_days", 7)
     
     expired = datetime.now() + timedelta(days=duration_days)
+    duration_readable = format_duration_readable(duration_days)
     
     user_id = update.effective_user.id
     
@@ -81,19 +93,22 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     })
     
     code_data["used"] = True
-    code_data["used_by"] = update.effective_user.id
+    code_data["used_by"] = user_id
     code_data["used_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     redeem_codes[code] = code_data
     save_redeem_codes(redeem_codes)
     
     text = f"""```
-🎁 REDEEM BERHASIL
+🎁 REDEEM BERHASIL ✅
 ───────────────────────────────────────
 
-Role        : {role}
-Aktif s.d.  : {expired.strftime("%d-%m-%Y %H:%M")}
-Durasi      : {duration_days} hari
+Role        : {role} (GRATIS)
+Durasi      : {duration_readable}
+  └─ Detail: {duration_days} hari
+  
+Aktif Mulai : {datetime.now().strftime("%d-%m-%Y %H:%M:%S")}
+Aktif s.d.  : {expired.strftime("%d-%m-%Y %H:%M:%S")}
 
 Selamat menikmati akses {role}!
 
