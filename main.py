@@ -95,7 +95,8 @@ def main():
     
     print("🔍 Verifying project integrity...")
     print("✅ Project integrity: VERIFIED")
-    print("✅ All credits: INTACT\n")
+    print("✅ All credits: INTACT")
+    print("👨‍💻 Created by: @KIFZLDEV\n")
     
     print("⚙️ Bot step initialized...")
     print("📥 Loading commands...\n")
