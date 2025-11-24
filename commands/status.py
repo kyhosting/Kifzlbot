@@ -85,10 +85,10 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = get_main_menu_keyboard(user_id)
     
-    # Send photo with status info caption combined
+    # Send photo with status info caption combined (no parse mode)
     try:
         with open("project_banner.png", "rb") as banner:
-            await update.message.reply_photo(photo=banner, caption=status_info, parse_mode="Markdown", reply_markup=keyboard)
+            await update.message.reply_photo(photo=banner, caption=status_info, reply_markup=keyboard)
     except:
         # Fallback to text only if photo fails
-        await update.message.reply_text(status_info, parse_mode="Markdown", reply_markup=keyboard)
+        await update.message.reply_text(status_info, reply_markup=keyboard)
