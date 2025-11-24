@@ -3,7 +3,6 @@ from telegram.ext import ContextTypes
 from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 from commands.menu import get_main_menu_keyboard
-from commands.banner_helper import send_with_banner
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -89,7 +88,7 @@ Saya siap bantu convert file & management kontak.
     is_owner = (user_id == OWNER_ID)
     is_verified = role in ["VIP", "PREMIUM"]
     
-    await send_with_banner(update, context, text, keyboard_main, parse_mode=None)
+    await update.message.reply_text(text, reply_markup=keyboard_main)
     
     if not is_owner and not is_verified and role == "FREE":
         verify_keyboard = [
