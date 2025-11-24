@@ -75,8 +75,7 @@ async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_document(
             document=open(filepath, 'rb'),
             filename=f"{filename}.txt",
-            caption="```\n✅ Berhasil convert MSG to TXT!\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
+            caption="✅ Berhasil convert MSG to TXT!",
             reply_markup=keyboard
         )
         

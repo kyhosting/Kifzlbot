@@ -145,8 +145,7 @@ async def gabung_file_merge(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_document(
             document=open(output_filepath, 'rb'),
             filename=f"{output_name}.{file_type}",
-            caption=f"```\n✅ Berhasil gabungkan {len(merge_files)} file!\n📂 Total kontak: {total_count}\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
+            caption=f"✅ Berhasil gabung {len(merge_files)} file!\n📂 Total: {total_count} kontak",
             reply_markup=keyboard
         )
         

@@ -75,8 +75,7 @@ async def vcf_to_txt_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_document(
             document=open(txt_filepath, 'rb'),
             filename=txt_filename,
-            caption=f"```\n✅ Berhasil extract VCF to TXT!\n📂 Total nomor: {total_numbers}\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
+            caption=f"✅ Berhasil extract VCF to TXT!\n📂 Total: {total_numbers} nomor",
             reply_markup=keyboard
         )
         

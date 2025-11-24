@@ -162,8 +162,7 @@ async def xls_to_vcf_contactname(update: Update, context: ContextTypes.DEFAULT_T
         await update.message.reply_document(
             document=open(vcf_filepath, 'rb'),
             filename=f"{vcf_filename}.vcf",
-            caption=f"```\n✅ Berhasil convert XLS to VCF!\n📂 Total kontak: {len(phone_numbers)}\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
+            caption=f"✅ Berhasil convert XLS to VCF!\n📂 Total: {len(phone_numbers)} kontak",
             reply_markup=keyboard
         )
         
