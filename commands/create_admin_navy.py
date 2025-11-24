@@ -264,8 +264,7 @@ async def create_admin_navy_generate(update: Update, context: ContextTypes.DEFAU
         await update.message.reply_document(
             document=open(vcf_filepath, 'rb'),
             filename=f"{vcf_filename}.vcf",
-            caption=f"```\n✅ Berhasil create ADMIN & NAVY!\n📂 Total kontak: {total_contacts}\n   Admin: {len(admin_numbers)}\n   Navy: {len(navy_numbers)}\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
+            caption=f"✅ Berhasil create ADMIN & NAVY!\n📂 Total: {total_contacts} kontak\n   Admin: {len(admin_numbers)} | Navy: {len(navy_numbers)}",
             reply_markup=keyboard
         )
         

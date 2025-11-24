@@ -324,11 +324,7 @@ async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 filename=os.path.basename(output_file).replace(f"temp_{update.effective_user.id}_", "")
             )
         
-        await update.message.reply_text(
-            f"```\n✅ Berhasil Kak!\n📂 Total file: {len(output_files)}\n📁 Nama output: {output_name}\n\nKetik 'menu' untuk kembali.\n```",
-            parse_mode="Markdown",
-            reply_markup=keyboard
-        )
+        await send_with_banner(update, context, f"✅ Berhasil split!\n📂 Total: {len(output_files)} file\n📁 Nama: {output_name}", keyboard)
         
         user_data = get_user_data(update.effective_user.id)
         total_ops = user_data.get("total_operations", 0) + 1
