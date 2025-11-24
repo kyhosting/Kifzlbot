@@ -85,6 +85,9 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
 - All features implemented with keyboard button navigation
 - Modular architecture for easy maintenance
 - Auto-create JSON files on first run
+- Session tracking functions implemented (load_sessions, save_session, get_session, clear_session)
+- Note: ConversationHandler uses in-memory context.user_data for session state management
+- sessions.json available for logging/auditing, full persistence requires custom handler
 
 ## Environment Variables
 - `TELEGRAM_BOT_TOKEN`: Telegram bot API token (required)
