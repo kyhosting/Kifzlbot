@@ -5,7 +5,6 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
-from commands.banner_helper import send_with_banner
 from commands.redeem_utils import is_code_expired, format_duration_readable, format_code_expiry_readable
 
 ASK_CODE = range(1)

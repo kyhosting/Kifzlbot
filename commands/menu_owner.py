@@ -4,7 +4,6 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import OWNER_ID, load_users, save_users
 from commands.menu import get_main_menu_keyboard
-from commands.banner_helper import send_with_banner
 from commands.redeem_utils import generate_random_code, format_duration_readable, format_code_expiry_readable, parse_duration_text, format_duration_text_readable
 
 ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_MODE, ASK_REDEEM_CODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY = range(8)
