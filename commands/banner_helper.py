@@ -1,18 +1,17 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 import os
+from io import BytesIO
 
 async def send_with_banner(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, reply_markup=None, parse_mode="Markdown"):
     try:
-        # Read banner file into bytes
-        banner_path = "project_banner.png"
-        if os.path.exists(banner_path):
-            with open(banner_path, "rb") as banner_file:
-                banner_bytes = banner_file.read()
-            
-            # Send photo with banner bytes
+        # Get the absolute path to banner
+        banner_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "project_banner.png")
+        
+        if os.path.exists(banner_path) and os.path.getsize(banner_path) > 0:
+            # Send photo with file path
             await update.message.reply_photo(
-                photo=banner_bytes,
+                photo=open(banner_path, "rb"),
                 caption=text,
                 parse_mode=parse_mode,
                 reply_markup=reply_markup
@@ -29,13 +28,12 @@ async def send_with_banner(update: Update, context: ContextTypes.DEFAULT_TYPE, t
 
 async def edit_with_banner(query, text: str, reply_markup=None, parse_mode="Markdown"):
     try:
-        banner_path = "project_banner.png"
-        if os.path.exists(banner_path):
-            with open(banner_path, "rb") as banner_file:
-                banner_bytes = banner_file.read()
-            
+        # Get the absolute path to banner
+        banner_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "project_banner.png")
+        
+        if os.path.exists(banner_path) and os.path.getsize(banner_path) > 0:
             await query.edit_message_media(
-                media={"type": "photo", "media": banner_bytes},
+                media={"type": "photo", "media": open(banner_path, "rb")},
                 reply_markup=reply_markup
             )
             await query.edit_message_caption(
