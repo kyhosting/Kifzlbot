@@ -32,7 +32,7 @@ Anda ubah menjadi file .txt
 async def msg_to_txt_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -58,7 +58,7 @@ Contoh: kontak_saya
 async def msg_to_txt_filename(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     

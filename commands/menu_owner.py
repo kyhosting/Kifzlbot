@@ -10,7 +10,7 @@ ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION, ASK_REDEEM_CODE, ASK_REDEEM_ROL
 
 async def menu_owner_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != OWNER_ID:
-        await update.message.reply_text("""```\n❌ Anda bukan owner!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Anda bukan owner!\n```", parse_mode="Markdown")
         return ConversationHandler.END
     
     action_keyboard = ReplyKeyboardMarkup([
@@ -37,7 +37,7 @@ Pilih aksi yang ingin dilakukan:
 async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "🔙 KEMBALI":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n🔙 Kembali ke menu utama\n```",
+        await update.message.reply_text("```\n🔙 Kembali ke menu utama\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -47,7 +47,7 @@ async def menu_owner_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
         users = load_users()
         
         if not users:
-            await update.message.reply_text("""```\n❌ Belum ada user terdaftar\n```", parse_mode="Markdown")
+            await update.message.reply_text("```\n❌ Belum ada user terdaftar\n```", parse_mode="Markdown")
             return ASK_ACTION
         
         user_list = []
@@ -131,7 +131,7 @@ async def menu_owner_user_id(update: Update, context: ContextTypes.DEFAULT_TYPE)
         user_id = int(update.message.text.strip())
         context.user_data['target_user_id'] = user_id
     except:
-        await update.message.reply_text("""```\n❌ User ID harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ User ID harus angka!\n```", parse_mode="Markdown")
         return ASK_USER_ID
     
     role_keyboard = ReplyKeyboardMarkup([
@@ -158,7 +158,7 @@ async def menu_owner_role(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     role = update.message.text
     if role not in ["FREE", "VIP", "PREMIUM"]:
-        await update.message.reply_text("""```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
         return ASK_ROLE
     
     context.user_data['target_role'] = role
@@ -190,7 +190,7 @@ async def menu_owner_duration(update: Update, context: ContextTypes.DEFAULT_TYPE
     try:
         duration = int(update.message.text.strip())
     except:
-        await update.message.reply_text("""```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
         return ASK_DURATION
     
     user_id = context.user_data.get('target_user_id')
@@ -263,7 +263,7 @@ async def menu_owner_redeem_role(update: Update, context: ContextTypes.DEFAULT_T
     
     role = update.message.text
     if role not in ["VIP", "PREMIUM"]:
-        await update.message.reply_text("""```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Role tidak valid!\n```", parse_mode="Markdown")
         return ASK_REDEEM_ROLE
     
     context.user_data['redeem_role'] = role
@@ -292,7 +292,7 @@ async def menu_owner_redeem_duration(update: Update, context: ContextTypes.DEFAU
     try:
         duration = int(update.message.text.strip())
     except:
-        await update.message.reply_text("""```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Durasi harus angka!\n```", parse_mode="Markdown")
         return ASK_REDEEM_DURATION
     
     code = context.user_data.get('redeem_code')

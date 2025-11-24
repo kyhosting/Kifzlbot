@@ -39,7 +39,7 @@ untuk mendapatkan akses VIP/PREMIUM
 async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
@@ -49,14 +49,14 @@ async def redeem_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = get_main_menu_keyboard(update.effective_user.id)
     
     if code not in redeem_codes:
-        await update.message.reply_text("""```\n❌ Kode redeem tidak valid!\n```",
+        await update.message.reply_text("```\n❌ Kode redeem tidak valid!\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     code_data = redeem_codes[code]
     
     if code_data.get("used", False):
-        await update.message.reply_text("""```\n❌ Kode redeem sudah digunakan!\n```",
+        await update.message.reply_text("```\n❌ Kode redeem sudah digunakan!\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     

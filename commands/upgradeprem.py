@@ -44,7 +44,7 @@ async def handle_premium_callback(update: Update, context: ContextTypes.DEFAULT_
     if query.data == "prem_cancel":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
         await query.edit_message_text("```\n❌ Pembelian dibatalkan\n```", parse_mode="Markdown")
-        await query.message.reply_text("Ketik 'menu' untuk kembali", reply_markup=keyboard)
+        await query.message.reply_text("Ketik 'menu' untuk kembali", parse_mode="Markdown", reply_markup=keyboard)
         return
     
     if query.data.startswith("prem_select_"):

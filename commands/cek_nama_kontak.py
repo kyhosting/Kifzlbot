@@ -33,16 +33,16 @@ daftar nama kontak
 async def cek_nama_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```",
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```",
                 parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
-        await update.message.reply_text("""```\n❌ Kirim file .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Kirim file .vcf!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     if not update.message.document.file_name.endswith('.vcf'):
-        await update.message.reply_text("""```\n❌ File harus berformat .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ File harus berformat .vcf!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     file = await update.message.document.get_file()

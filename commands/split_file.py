@@ -57,17 +57,17 @@ dipecah menjadi beberapa file
 async def split_file_receive(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.text == "❌ BATAL ❌":
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     if not update.message.document:
-        await update.message.reply_text("""```\n❌ Kirim file .txt atau .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Kirim file .txt atau .vcf!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     filename = update.message.document.file_name
     
     if not (filename.endswith('.txt') or filename.endswith('.vcf')):
-        await update.message.reply_text("""```\n❌ File harus .txt atau .vcf!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ File harus .txt atau .vcf!\n```", parse_mode="Markdown")
         return ASK_FILE
     
     file = await update.message.document.get_file()
@@ -101,7 +101,7 @@ async def split_file_output_name(update: Update, context: ContextTypes.DEFAULT_T
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     context.user_data['output_name'] = update.message.text.strip()
@@ -128,14 +128,14 @@ async def split_file_prefix(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
         file_prefix = int(update.message.text.strip())
         context.user_data['file_prefix'] = file_prefix
     except:
-        await update.message.reply_text("""```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
         return ASK_FILE_PREFIX
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
@@ -160,14 +160,14 @@ async def split_contact_prefix(update: Update, context: ContextTypes.DEFAULT_TYP
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
         contact_prefix = int(update.message.text.strip())
         context.user_data['contact_prefix'] = contact_prefix
     except:
-        await update.message.reply_text("""```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
         return ASK_CONTACT_PREFIX
     
     mode_keyboard = ReplyKeyboardMarkup([
@@ -197,13 +197,13 @@ async def split_mode_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     mode = update.message.text
     
     if mode not in ["PER KONTAK", "PER BAGIAN"]:
-        await update.message.reply_text("""```\n❌ Pilih mode yang valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Pilih mode yang valid!\n```", parse_mode="Markdown")
         return ASK_SPLIT_MODE
     
     context.user_data['split_mode'] = mode
@@ -243,13 +243,13 @@ async def split_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if 'split_file' in context.user_data and os.path.exists(context.user_data['split_file']):
             os.remove(context.user_data['split_file'])
         keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text("""```\n❌ Proses dibatalkan\n```", reply_markup=keyboard)
+        await update.message.reply_text("```\n❌ Proses dibatalkan\n```", parse_mode="Markdown", reply_markup=keyboard)
         return ConversationHandler.END
     
     try:
         split_value = int(update.message.text.strip())
     except:
-        await update.message.reply_text("""```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
+        await update.message.reply_text("```\n❌ Masukkan angka yang valid!\n```", parse_mode="Markdown")
         return ASK_SPLIT_VALUE
     
     filepath = context.user_data.get('split_file')
