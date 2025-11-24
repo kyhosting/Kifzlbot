@@ -91,3 +91,41 @@ def update_user_data(user_id, data):
     
     users[user_str].update(data)
     save_users(users)
+
+def load_sessions():
+    try:
+        with open("sessions.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_session(user_id, session_data):
+    sessions = load_sessions()
+    user_str = str(user_id)
+    
+    def serializer(obj):
+        if isinstance(obj, datetime):
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
+        return obj
+    
+    if user_str not in sessions:
+        sessions[user_str] = {}
+    
+    sessions[user_str].update(session_data)
+    sessions[user_str]['last_updated'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    with open("sessions.json", "w") as f:
+        json.dump(sessions, f, indent=2, default=serializer)
+
+def get_session(user_id):
+    sessions = load_sessions()
+    return sessions.get(str(user_id), {})
+
+def clear_session(user_id):
+    sessions = load_sessions()
+    user_str = str(user_id)
+    
+    if user_str in sessions:
+        del sessions[user_str]
+        with open("sessions.json", "w") as f:
+            json.dump(sessions, f, indent=2)
