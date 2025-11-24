@@ -46,23 +46,44 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     total_ops = user_data.get("total_operations", 0)
     
-    text = f"""🎌 **KIFZL DEV BOT** 🎌
-_(BY @KIFZLDEV)_
+    text = f"""🎌  KIFZL DEV CV BOTS  
+(BY KIFZL DEV)
+───────────────────────────────────────
 
-**📍 STATUS AKUN**
-• **Nama**: {name}
-• **ID**: {user_id}
-• **Username**: {username}
-• **Role**: {role}
-• **Status**: {status}
-• **Masa Aktif**: {expired_str}
-• **Hari Tersisa**: {remaining_days} hari
+"KONNICHIWA, WATASHI WA KIFZL_BOT DESU"
+Saya siap bantu convert file & management kontak.
+✦ Created by: @KIFZLDEV
 
-**⚡ FITUR UTAMA**
-🔹 STATUS • MSG↔TXT • TXT↔VCF • VCF↔TXT
-🔹 ADM & NAVY • RAPIKAN TXT • XLSX↔VCF
-🔹 GABUNG • HITUNG KONTAK • CEK KONTAK
-🔹 SPLIT FILE • REDEEM CODE • OWNER MENU"""
+───────────────────────────────────────
+📍 STATUS AKUN
+───────────────────────────────────────
+• NAMA          : {name}
+• ID            : {user_id}
+• USERNAME      : {username}
+• ROLE          : {role}
+• STATUS        : {status}
+• MASA AKTIF    : {expired_str}
+• HARI TERSISA  : {remaining_days} hari
+• TOTAL OPSI    : {total_ops}
+
+───────────────────────────────────────
+⚡ FITUR UTAMA
+───────────────────────────────────────
+🜲 STATUS               — Cek akses  
+🜲 MSG → TXT            — Convert  
+🜲 TXT → VCF            — Convert  
+🜲 VCF → TXT            — Ekstrak  
+🜲 CREATE ADM & NAVY    — Buat kontak admin/navy  
+🜲 RAPIKAN TXT          — Bersihkan format  
+🜲 XLS → VCF            — Convert XLS  
+🜲 GABUNG FILE          — Gabungkan  
+🜲 HITUNG KONTAK        — Hitung kontak  
+🜲 CEK NAMA KONTAK      — Validasi nama  
+🜲 SPLIT FILE           — Bagi file  
+🎁 REDEEM CODE          — Aktivasi  
+🜲 MENU OWNER           — Khusus owner  
+
+───────────────────────────────────────"""
     
     keyboard_main = get_main_menu_keyboard(user_id)
     is_owner = (user_id == OWNER_ID)

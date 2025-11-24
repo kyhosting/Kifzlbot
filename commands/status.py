@@ -49,28 +49,39 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total_ops = user_data.get("total_operations", 0)
     is_owner = (user_id == OWNER_ID)
     
-    status_info = f"""✨ **CEK STATUS AKUN** ✨
+    status_info = f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✨ CEK STATUS AKUN ANDA ✨
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**👤 INFO AKUN**
-• **Nama**: {name}
-• **ID**: {user_id}
-• **Username**: {username}
-
-**💎 STATUS LANGGANAN**
-• **Role**: {role}
-• **Status**: {status}
-• **Masa Aktif**: {expired_str}
-• **Hari Tersisa**: {remaining_days} hari
-• **Jam Tersisa**: {remaining_hours} jam
-
-**📊 STATISTIK**
-• **Total Operasi**: {total_ops}"""
-    
+👤 INFORMASI AKUN:
+   • NAMA          : {name}
+   • ID            : {user_id}
+   • USERNAME      : {username}
+   
+💎 STATUS LANGGANAN:
+   • ROLE          : {role}
+   • STATUS        : {status}
+   • MASA AKTIF    : {expired_str}
+   • HARI TERSISA  : {remaining_days} hari
+   • JAM TERSISA   : {remaining_hours} jam
+   
+📊 STATISTIK:
+   • TOTAL OPERASI : {total_ops}"""
+   
     if is_owner:
-        status_info += "\n• **Tipe Akun**: 👑 OWNER"
+        status_info += f"\n   • TIPE AKUN    : 👑 OWNER"
+    
+    status_info += """
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
     
     if role == "FREE":
-        status_info += "\n\n🎯 **DAPATKAN AKSES**\n💎 Beli Premium | 🎟 Redeem Code"
+        status_info += """
+
+🎯 CARA DAPATKAN AKSES LEBIH:
+   • 💎 Beli Premium (1/7/30 hari)
+   • 🎟  Redeem Code gratis dari owner"""
     
     keyboard = get_main_menu_keyboard(user_id)
     
