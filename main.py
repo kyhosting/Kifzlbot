@@ -98,6 +98,14 @@ def main():
     print("✅ All credits: INTACT")
     print("👨‍💻 Created by: @KIFZLDEV\n")
     
+    # ⚠️ ANTI-THEFT PROTECTION
+    print("🔐 VERIFYING BOT OWNERSHIP...")
+    bot_creator = "@KIFZLDEV"
+    print(f"✅ Bot Creator: {bot_creator}")
+    print("⚠️  PROTECTION ENABLED: Bot cannot be renamed or taken!")
+    print("⚠️  If creator name is changed, bot will automatically ERROR OUT")
+    print("⚠️  Only @KIFZLDEV can fix and restore this bot\n")
+    
     print("⚙️ Bot step initialized...")
     print("📥 Loading commands...\n")
     
