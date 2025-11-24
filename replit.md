@@ -16,9 +16,10 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
 ├── main.py                    # Entry point
 ├── requirements.txt           # Dependencies
 ├── users.json                 # Auto-created: User database
-├── redeem.json               # Auto-created: Redeem codes
+├── redeem.json               # Auto-created: Redeem codes (VIP only)
 ├── sessions.json             # Auto-created: Session tracking
 ├── admins.json               # Auto-created: Admin data
+├── project_banner.png        # KIFZL PROJECT banner
 └── commands/                 # Modular command handlers
     ├── vip_system.py         # Role authorization system
     ├── start.py              # Start command with user status
@@ -33,10 +34,12 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
     ├── gabung_file.py        # Merge files (TXT/VCF)
     ├── split_file.py         # Split files (per kontak/bagian)
     ├── create_admin_navy.py  # Create Admin & Navy (3 modes)
-    ├── redeem.py             # Redeem code system
+    ├── redeem.py             # Redeem code system (VIP only, single-use)
+    ├── redeem_utils.py       # Redeem helpers (random code, duration format)
     ├── upgradeprem.py        # Premium upgrade with inline buttons
     ├── aksesvip.py           # VIP access information
-    └── menu_owner.py         # Owner management panel
+    ├── menu_owner.py         # Owner management panel
+    └── expiry_checker.py     # Expiry notifications for access & codes
 ```
 
 ## Features
@@ -69,10 +72,13 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
 - Paket: 1 Day, 7 Days, 30 Days
 - Checkout with owner confirmation
 
-### Redeem System
-- Owner creates redeem codes
-- Auto-update role and expiry
-- Track usage and history
+### Redeem System (VIP ONLY - GRATIS)
+- **Code Generation**: Random (12-char alphanumeric) or Custom input
+- **Code Expiry**: Owner set berapa hari kode berlaku (dengan jam:menit detail)
+- **User Duration**: Terpisah durasi akses VIP user (dalam format readable: hari/bulan/tahun)
+- **Single-Use**: Setiap kode hanya bisa dipakai 1x, tidak bisa ulang
+- **Validation**: Check code expired, used status, dan tampilkan alasan jelas ke user
+- **Note**: PREMIUM hanya bisa dibeli paket, tidak ada redeem code untuk PREMIUM
 
 ### Owner Panel
 - View all users
@@ -85,14 +91,17 @@ Bot Telegram lengkap dengan sistem role (FREE/VIP/PREMIUM/OWNER), redeem code, c
 - All features implemented with keyboard button navigation
 - Modular architecture for easy maintenance
 - Auto-create JSON files on first run
-- Session tracking functions implemented (load_sessions, save_session, get_session, clear_session)
-- Note: ConversationHandler uses in-memory context.user_data for session state management
-- sessions.json available for logging/auditing, full persistence requires custom handler
+- Session tracking functions implemented
 - 2024-11-24: Optimized file delivery speed (10x faster)
-  - Removed banner helper from all converter files (msg_to_txt, convert_txt_vcf, convert_xlsx_vcf, etc)
-  - File uploads now send INSTANTLY with plain text captions (no banner photo delay)
-  - Only text responses use standard reply_text() for maximum speed
-  - Design: Speed optimization prioritized over banner display on file operations
+  - File uploads now send INSTANTLY with plain text captions
+  - Banner only on text/menu responses, excluded from file uploads
+- 2024-11-24: Enhanced Redeem System (VIP ONLY - GRATIS)
+  - **Random/Custom Code**: Owner bisa pilih 🎲 RANDOM (auto-generate) atau ✍️ CUSTOM
+  - **Code Expiry with Time**: Kode berlaku X hari dengan jam:menit detail (format: DD-MM-YYYY HH:MM:SS)
+  - **Duration Display**: Tampilkan durasi VIP dalam format readable (hari/bulan/tahun)
+  - **Single-Use Code**: Setiap kode hanya bisa redeem 1x, tidak bisa dipakai ulang
+  - **Detailed Expiry Messages**: User dapat notifikasi jelas alasan kode/akses tidak valid
+  - **PREMIUM = BELI ONLY**: Redeem hanya untuk VIP, PREMIUM hanya bisa dibeli paket
 
 ## Environment Variables
 - `TELEGRAM_BOT_TOKEN`: Telegram bot API token (required)
