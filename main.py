@@ -18,6 +18,7 @@ from commands.start import start_command
 from commands.menu import show_menu
 from commands.status import check_status
 from commands.verify import handle_verify_callback, handle_verify_back, handle_member_join
+from commands.expiry_checker import check_and_notify_expired_users
 from commands.msg_to_txt import msg_to_txt_start, msg_to_txt_message, msg_to_txt_filename, ASK_MESSAGE as MSG_ASK_MESSAGE, ASK_FILENAME as MSG_ASK_FILENAME
 from commands.rapikan_txt import rapikan_txt_start, rapikan_txt_file, ASK_FILE as RAPIKAN_ASK_FILE
 from commands.convert_txt_vcf import txt_to_vcf_start, txt_to_vcf_file, txt_to_vcf_filename, txt_to_vcf_contactname, ASK_FILE as TXT_VCF_ASK_FILE, ASK_FILENAME as TXT_VCF_ASK_FILENAME, ASK_CONTACTNAME as TXT_VCF_ASK_CONTACTNAME
@@ -233,6 +234,8 @@ def main():
     application.add_handler(TypeHandler(ChatMemberUpdated, handle_member_join))
     
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_messages))
+    
+    application.job_queue.run_repeating(check_and_notify_expired_users, interval=3600, first=10)
     
     logger.info("Bot started successfully!")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
