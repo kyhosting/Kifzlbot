@@ -1,6 +1,5 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
-from commands.banner_helper import send_with_banner
 
 async def aksesvip_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = """```

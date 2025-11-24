@@ -2,7 +2,6 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKe
 from telegram.ext import ContextTypes, CallbackQueryHandler
 from commands.menu import get_main_menu_keyboard
 from commands.vip_system import OWNER_ID
-from commands.banner_helper import send_with_banner
 
 PACKAGES = {
     "PREM_DAY": {"name": "1 Hari", "duration": "24 Jam", "price": 5000},
