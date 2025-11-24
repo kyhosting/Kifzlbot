@@ -1,6 +1,7 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes
 from commands.vip_system import get_user_role, OWNER_ID
+from commands.banner_helper import send_with_banner
 
 def get_main_menu_keyboard(user_id):
     is_owner = (user_id == OWNER_ID)
@@ -50,12 +51,4 @@ Pilih menu yang tersedia di bawah ini:
 ───────────────────────────────────────
 ```"""
     
-    try:
-        await update.message.reply_photo(
-            photo=open("bot_banner.jpg", "rb"),
-            caption=text,
-            parse_mode="Markdown",
-            reply_markup=keyboard
-        )
-    except:
-        await update.message.reply_text(text, parse_mode="Markdown", reply_markup=keyboard)
+    await send_with_banner(update, context, text, keyboard)

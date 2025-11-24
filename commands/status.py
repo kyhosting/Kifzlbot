@@ -3,6 +3,7 @@ from telegram.ext import ContextTypes
 from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 from commands.menu import get_main_menu_keyboard
+from commands.banner_helper import send_with_banner
 
 async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -88,12 +89,4 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = get_main_menu_keyboard(user_id)
     
-    try:
-        await update.message.reply_photo(
-            photo=open("bot_banner.jpg", "rb"),
-            caption=status_info,
-            parse_mode="Markdown",
-            reply_markup=keyboard
-        )
-    except:
-        await update.message.reply_text(status_info, parse_mode="Markdown", reply_markup=keyboard)
+    await send_with_banner(update, context, status_info, keyboard)
