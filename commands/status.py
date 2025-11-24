@@ -85,12 +85,4 @@ async def check_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = get_main_menu_keyboard(user_id)
     
-    # Send banner photo first
-    try:
-        with open("project_banner.png", "rb") as banner:
-            await update.message.reply_photo(photo=banner, caption="🎌 KIFZL PROJECT BOT")
-    except:
-        pass
-    
-    # Send status info (no parse_mode to avoid markdown parsing errors)
-    await update.message.reply_text(status_info, reply_markup=keyboard)
+    await send_with_banner(update, context, status_info, keyboard)
