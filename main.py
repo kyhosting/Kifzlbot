@@ -85,6 +85,36 @@ async def handle_text_messages(update: Update, context):
             reply_markup=keyboard
         )
 
+def verify_bot_ownership():
+    """Verify bot name hasn't been changed - ANTI-THEFT PROTECTION"""
+    required_creator = "@KIFZLDEV"
+    
+    # Check start.py for creator name
+    with open("commands/start.py", "r") as f:
+        start_content = f.read()
+        if required_creator not in start_content:
+            print("\n" + "="*50)
+            print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
+            print("="*50)
+            print(f"❌ Bot creator name changed from: {required_creator}")
+            print("❌ This bot is protected and can only be fixed by @KIFZLDEV")
+            print("❌ Bot will NOT start until original creator name is restored!")
+            print("="*50 + "\n")
+            raise Exception(f"Bot name tampering detected! Only @KIFZLDEV can fix this.")
+    
+    # Check menu.py for creator name
+    with open("commands/menu.py", "r") as f:
+        menu_content = f.read()
+        if required_creator not in menu_content:
+            print("\n" + "="*50)
+            print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
+            print("="*50)
+            print(f"❌ Bot creator name changed from: {required_creator}")
+            print("❌ This bot is protected and can only be fixed by @KIFZLDEV")
+            print("❌ Bot will NOT start until original creator name is restored!")
+            print("="*50 + "\n")
+            raise Exception(f"Bot name tampering detected! Only @KIFZLDEV can fix this.")
+
 def main():
     print("\n" + "="*50)
     print("⏳ Initial KIFZL DEV BOT Initializing...")
@@ -98,13 +128,18 @@ def main():
     print("✅ All credits: INTACT")
     print("👨‍💻 Created by: @KIFZLDEV\n")
     
-    # ⚠️ ANTI-THEFT PROTECTION
+    # ⚠️ ANTI-THEFT PROTECTION - ENFORCE BOT NAME
     print("🔐 VERIFYING BOT OWNERSHIP...")
-    bot_creator = "@KIFZLDEV"
-    print(f"✅ Bot Creator: {bot_creator}")
-    print("⚠️  PROTECTION ENABLED: Bot cannot be renamed or taken!")
-    print("⚠️  If creator name is changed, bot will automatically ERROR OUT")
-    print("⚠️  Only @KIFZLDEV can fix and restore this bot\n")
+    try:
+        verify_bot_ownership()
+        bot_creator = "@KIFZLDEV"
+        print(f"✅ Bot Creator: {bot_creator}")
+        print("✅ PROTECTION ACTIVE: Bot name verified and protected!")
+        print("⚠️  Attempting to rename or take this bot will cause ERROR!")
+        print("⚠️  Only @KIFZLDEV can fix and restore this bot\n")
+    except Exception as e:
+        print(f"🛑 STARTUP BLOCKED: {e}\n")
+        return
     
     print("⚙️ Bot step initialized...")
     print("📥 Loading commands...\n")
