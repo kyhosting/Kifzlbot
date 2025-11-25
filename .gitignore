@@ -41,3 +41,6 @@ temp_*
 # OS
 .DS_Store
 Thumbs.db
+
+# .env file (keep secrets private)
+.env
