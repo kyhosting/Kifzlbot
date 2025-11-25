@@ -12,7 +12,7 @@ def get_main_menu_keyboard(user_id):
         [KeyboardButton("🜲 CREATE ADM/NAVY 🜲")],
         [KeyboardButton("🜲 RAPIKAN TXT 🜲"), KeyboardButton("🜲 GABUNG FILE 🜲")],
         [KeyboardButton("🜲 HITUNG KONTAK 🜲"), KeyboardButton("🜲 CEK NAMA 🜲")],
-        [KeyboardButton("🜲 SPLIT FILE 🜲"), KeyboardButton("🎁 REDEEM CODE 🎁")],
+        [KeyboardButton("🜲 SPLIT FILE 🜲")],
     ]
     
     if is_owner:
@@ -45,7 +45,12 @@ Pilih menu yang tersedia di bawah ini:
 🜲 HITUNG KONTAK        — Hitung  
 🜲 CEK NAMA KONTAK      — Validasi  
 🜲 SPLIT FILE           — Bagi file  
-🎁 REDEEM CODE          — Aktivasi  
+
+───────────────────────────────────────
+💳 GUNAKAN COMMAND:
+/aksesvip      — Dapatkan akses VIP
+/upgradeprem   — Upgrade ke PREMIUM
+/redeem        — Redeem kode
 
 ───────────────────────────────────────
 ```"""
