@@ -43,10 +43,12 @@ Sisa Hari    : 7 hari
 akses VIP GRATIS 7 hari!
 
 Nikmati semua fitur premium bot kami.
+
+Ketik /start untuk mulai menggunakan bot!
 ```"""
     
     keyboard = [
-        [InlineKeyboardButton("🏠 Kembali ke Menu", callback_data="verify_back")]
+        [InlineKeyboardButton("▶️ /start", callback_data="verify_back")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
@@ -74,20 +76,65 @@ async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE)
         if user_id == OWNER_ID:
             return
         
-        text = f"""```
+        # Check if user already has active VIP/PREMIUM
+        current_role = get_user_role(user_id)
+        user_data = get_user_data(user_id)
+        
+        # If user already has VIP or PREMIUM access
+        if current_role in ["VIP", "PREMIUM"]:
+            expired_str = "Tidak ada"
+            remaining_days = 0
+            
+            if user_data and user_data.get("expired"):
+                try:
+                    if isinstance(user_data.get("expired"), str):
+                        expired_dt = datetime.strptime(user_data.get("expired"), "%Y-%m-%d %H:%M:%S")
+                    else:
+                        expired_dt = user_data.get("expired")
+                    
+                    if expired_dt > datetime.now():
+                        expired_str = expired_dt.strftime("%d-%m-%Y %H:%M")
+                        remaining_days = (expired_dt - datetime.now()).days
+                except:
+                    pass
+            
+            text = f"""```
+👋 SELAMAT BERGABUNG!
+
+Halo {user.full_name}!
+Anda sudah memiliki akses VIP aktif.
+
+Akses      : {current_role}
+Masa Aktif : {expired_str}
+Sisa Hari  : {remaining_days} hari
+
+Terima kasih sudah menjadi bagian dari grup kami!
+
+Ketik /start untuk mulai menggunakan bot!
+```"""
+            
+            keyboard = [
+                [InlineKeyboardButton("▶️ /start", url="https://t.me/KIFZLBOT?start=1")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+        else:
+            # New user - show verification button
+            text = f"""```
 🎉 SELAMAT BERGABUNG!
 
 Halo {user.full_name}! 👋
 Terima kasih sudah join grup kami.
 
 Silakan verifikasi akun Anda untuk
-mendapatkan akses VIP gratis 1 minggu!
+mendapatkan akses VIP gratis 7 hari!
+
+Ketik /start setelah verifikasi!
 ```"""
-        
-        keyboard = [
-            [InlineKeyboardButton("✅ VERIFIKASI SEKARANG", callback_data="verify_user")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            keyboard = [
+                [InlineKeyboardButton("✅ VERIFIKASI SEKARANG", callback_data="verify_user")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
         
         try:
             await user.send_message(text,
