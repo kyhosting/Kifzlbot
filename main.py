@@ -158,6 +158,9 @@ def main():
     application = Application.builder().token(token).build()
     
     application.add_handler(CommandHandler("start", start_command))
+    application.add_handler(CommandHandler("upgradeprem", upgradeprem_show))
+    application.add_handler(CommandHandler("aksesvip", aksesvip_show))
+    application.add_handler(CommandHandler("redeem", redeem_start))
     
     msg_to_txt_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start)],
@@ -291,8 +294,6 @@ def main():
     application.add_handler(redeem_conv)
     application.add_handler(menu_owner_conv)
     
-    application.add_handler(MessageHandler(filters.Regex("^💎 UPGRADE PREMIUM 💎$"), upgradeprem_show))
-    application.add_handler(MessageHandler(filters.Regex("^🎟 AKSES VIP 🎟$"), aksesvip_show))
     
     application.add_handler(CallbackQueryHandler(handle_premium_callback, pattern="^prem_"))
     application.add_handler(CallbackQueryHandler(handle_aksesvip_callback, pattern="^akses_"))

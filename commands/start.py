@@ -80,8 +80,12 @@ Saya siap bantu convert file & management kontak.
 🜲 HITUNG KONTAK        — Hitung kontak  
 🜲 CEK NAMA KONTAK      — Validasi nama  
 🜲 SPLIT FILE           — Bagi file  
-🎁 REDEEM CODE          — Aktivasi  
-🜲 MENU OWNER           — Khusus owner  
+
+───────────────────────────────────────
+💳 GUNAKAN COMMAND:
+/aksesvip      — Dapatkan akses VIP
+/upgradeprem   — Upgrade ke PREMIUM
+/redeem        — Redeem kode
 
 ───────────────────────────────────────
 ```"""
