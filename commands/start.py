@@ -64,6 +64,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     username = f"@{user.username}" if user.username else "Tidak ada"
     
     user_data = get_user_data(user_id)
+    old_role = user_data.get("role", "FREE") if user_data else "FREE"
+    
     if not user_data:
         update_user_data(user_id, {
             "name": name,
@@ -79,6 +81,25 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Reload user data after VIP check
     user_data = get_user_data(user_id)
     role = user_data.get("role", "FREE")
+    
+    # If just upgraded to VIP at /start
+    if old_role == "FREE" and role == "VIP":
+        upgrade_text = """```
+✅ SELAMAT!
+
+Kami detect Anda sudah join KEDUA grup VIP kami:
+📌 @agentviber12
+📌 @channelviber
+
+Akses VIP GRATIS 7 hari telah diaktifkan otomatis!
+
+⏰ Durasi: 7 hari
+🎁 Nikmati semua fitur premium sekarang!
+```"""
+        try:
+            await update.message.reply_text(upgrade_text, parse_mode="Markdown")
+        except:
+            pass
     
     # Check if user is NOT in both groups - show warning and RETURN
     if groups_count < 2 and role == "FREE":
