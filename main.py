@@ -198,6 +198,43 @@ async def handle_text_messages(update: Update, context):
         await show_menu(update, context)
     elif text == "🜲 STATUS 🜲":
         await check_status(update, context)
+    elif text == "/status_debug":
+        # Debug command for checking group membership
+        user_id = update.effective_user.id
+        from commands.vip_system import ChatMember, get_user_data
+        
+        vip_groups = ["agentviber12", "channelviber"]
+        groups_count = 0
+        group_status = []
+        
+        for group in vip_groups:
+            try:
+                member = await context.bot.get_chat_member(f"@{group}", user_id)
+                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                    groups_count += 1
+                    group_status.append(f"✅ {group}: {member.status}")
+                else:
+                    group_status.append(f"❌ {group}: {member.status}")
+            except Exception as e:
+                group_status.append(f"❌ {group}: ERROR - {str(e)}")
+        
+        user_data = get_user_data(user_id)
+        debug_text = f"""```
+🔧 DEBUG STATUS
+────────────────
+User ID: {user_id}
+Groups Count: {groups_count}/2
+Role: {user_data.get('role', 'N/A')}
+Expired: {user_data.get('expired', 'N/A')}
+Verified: {user_data.get('verified', 'N/A')}
+
+📍 GROUP MEMBERSHIP:
+{chr(10).join(group_status)}
+
+💾 USER DATA:
+{json.dumps(user_data, indent=2)}
+```"""
+        await update.message.reply_text(debug_text, parse_mode="Markdown")
     else:
         keyboard = get_main_menu_keyboard(update.effective_user.id)
         await update.message.reply_text(

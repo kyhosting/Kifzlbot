@@ -123,7 +123,7 @@ async def check_access_with_group_verify(user_id, required_role, bot, update):
             member = await bot.get_chat_member(f"@{group}", user_id)
             if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
                 groups_count += 1
-        except:
+        except Exception as e:
             pass
     
     # User must be in BOTH groups
@@ -137,6 +137,10 @@ async def check_access_with_group_verify(user_id, required_role, bot, update):
         return False
     
     return True
+
+def is_user_in_both_groups(member_status):
+    """Helper to check if member status is valid"""
+    return member_status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]
 
 def get_user_data(user_id):
     users = load_users()
