@@ -93,16 +93,11 @@ Akses VIP Anda telah dihapus otomatis.
 Untuk mendapatkan akses kembali:
 1. Join ke KEDUA grup kami
 2. Gunakan command /start
-3. Verifikasi akun Anda
-
-Grup VIP:
-📌 @agentviber12
-📌 @channelviber
 ```"""
     
     keyboard = [
-        [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12")],
-        [InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
+        [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12"),
+         InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
         [InlineKeyboardButton("🔙 MENU 🔙", callback_data="back_menu")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)

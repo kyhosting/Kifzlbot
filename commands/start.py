@@ -79,14 +79,12 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Check if user is NOT in both groups - show warning and RETURN
     if groups_count < 2 and role == "FREE":
+        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
         warning_text = """```
 ⚠️ ANDA BELUM BISA MENGGUNAKAN FITUR VIP
 
 Untuk mendapatkan akses VIP GRATIS 7 hari,
-silakan join ke KEDUA grup kami terlebih dahulu:
-
-📌 Grup 1: @agentviber12
-📌 Grup 2: @channelviber
+silakan join ke KEDUA grup kami terlebih dahulu.
 
 Setelah join KEDUA grup, gunakan /start lagi
 untuk mendapatkan akses VIP otomatis!
@@ -94,9 +92,14 @@ untuk mendapatkan akses VIP otomatis!
 ✨ Akses akan diberikan secara otomatis
 setelah join kedua grup.
 ```"""
-        keyboard = get_main_menu_keyboard(user_id)
+        keyboard = [
+            [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12"),
+             InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
+            [InlineKeyboardButton("🏠 Menu Utama", callback_data="back_menu")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
         try:
-            await update.message.reply_text(warning_text, parse_mode="Markdown", reply_markup=keyboard)
+            await update.message.reply_text(warning_text, parse_mode="Markdown", reply_markup=reply_markup)
         except:
             pass
         return
