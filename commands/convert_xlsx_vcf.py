@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+from openpyxl import load_workbook
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
 from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
@@ -68,8 +68,14 @@ async def xls_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await file.download_to_drive(filepath)
     
     try:
-        df = pd.read_excel(filepath)
-        all_numbers = df.values.flatten().tolist()
+        wb = load_workbook(filepath)
+        ws = wb.active
+        all_numbers = []
+        
+        for row in ws.iter_rows(values_only=True):
+            for cell in row:
+                if cell is not None:
+                    all_numbers.append(cell)
         
         phone_numbers = []
         for num in all_numbers:
