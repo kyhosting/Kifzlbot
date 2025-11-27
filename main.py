@@ -18,6 +18,8 @@ from commands.start import start_command
 from commands.menu import show_menu, get_main_menu_keyboard
 from commands.status import check_status
 from commands.verify import handle_verify_callback, handle_verify_back, handle_member_join
+from commands.upgradeprem import upgradeprem_show
+from commands.aksesvip import aksesvip_show
 from commands.expiry_checker import check_and_notify_expired_users
 from commands.msg_to_txt import msg_to_txt_start, msg_to_txt_message, msg_to_txt_filename, ASK_MESSAGE as MSG_ASK_MESSAGE, ASK_FILENAME as MSG_ASK_FILENAME
 from commands.rapikan_txt import rapikan_txt_start, rapikan_txt_file, ASK_FILE as RAPIKAN_ASK_FILE
@@ -68,6 +70,20 @@ def ensure_json_files():
             with open(file, 'w') as f:
                 json.dump({}, f)
             logger.info(f"Created {file}")
+
+async def handle_access_denied_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle inline buttons from access denied message"""
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == "upgrade_prem":
+        await upgradeprem_show(update, context)
+    elif query.data == "akses_vip":
+        await aksesvip_show(update, context)
+    elif query.data == "back_menu":
+        keyboard = get_main_menu_keyboard(query.from_user.id)
+        await query.message.reply_text("```\n🎌 Silakan pilih menu di bawah\n```",
+                    parse_mode="Markdown", reply_markup=keyboard)
 
 async def handle_text_messages(update: Update, context):
     text = update.message.text
@@ -294,6 +310,7 @@ def main():
     application.add_handler(MessageHandler(filters.Regex("^💎 UPGRADE PREMIUM 💎$"), upgradeprem_show))
     application.add_handler(MessageHandler(filters.Regex("^🎟 AKSES VIP 🎟$"), aksesvip_show))
     
+    application.add_handler(CallbackQueryHandler(handle_access_denied_buttons, pattern="^(upgrade_prem|akses_vip|back_menu)$"))
     application.add_handler(CallbackQueryHandler(handle_premium_callback, pattern="^prem_"))
     application.add_handler(CallbackQueryHandler(handle_aksesvip_callback, pattern="^akses_"))
     application.add_handler(CallbackQueryHandler(handle_verify_callback, pattern="^verify_user$"))
