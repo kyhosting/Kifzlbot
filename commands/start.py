@@ -1,8 +1,32 @@
-from telegram import Update
+from telegram import Update, ChatMember
 from telegram.ext import ContextTypes
-from datetime import datetime
+from datetime import datetime, timedelta
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 from commands.menu import get_main_menu_keyboard
+
+async def check_and_restore_vip(user_id, bot, context):
+    """Check if user still in VIP groups and restore access if needed"""
+    vip_groups = ["agentviber12", "channelviber"]
+    is_in_group = False
+    
+    for group in vip_groups:
+        try:
+            member = await bot.get_chat_member(f"@{group}", user_id)
+            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                is_in_group = True
+                break
+        except:
+            pass
+    
+    if is_in_group:
+        user_data = get_user_data(user_id)
+        if user_data.get("role") == "FREE":
+            expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+            update_user_data(user_id, {
+                "role": "VIP",
+                "expired": expired_date,
+                "verified": True
+            })
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -21,6 +45,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         })
         user_data = get_user_data(user_id)
     
+    await check_and_restore_vip(user_id, context.bot, context)
     role = get_user_role(user_id)
     
     expired = user_data.get("expired")

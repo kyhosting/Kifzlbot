@@ -66,14 +66,14 @@ async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member_update = update.my_chat_member
+    user = chat_member_update.from_user
+    user_id = user.id
+    new_status = chat_member_update.new_chat_member.status
     
-    if chat_member_update.new_chat_member.status == ChatMember.MEMBER:
-        user = chat_member_update.from_user
-        user_id = user.id
-        
-        if user_id == OWNER_ID:
-            return
-        
+    if user_id == OWNER_ID:
+        return
+    
+    if new_status == ChatMember.MEMBER:
         text = f"""```
 🎉 SELAMAT BERGABUNG!
 
@@ -92,5 +92,26 @@ mendapatkan akses VIP gratis 1 minggu!
         try:
             await user.send_message(text,
                 parse_mode="Markdown", reply_markup=reply_markup)
+        except:
+            pass
+    
+    elif new_status in [ChatMember.LEFT, ChatMember.KICKED]:
+        update_user_data(user_id, {
+            "role": "FREE",
+            "expired": None,
+            "verified": False
+        })
+        
+        try:
+            text = """```
+⚠️ AKSES DICABUT
+
+Anda telah keluar dari grup VIP kami.
+Akses VIP Anda telah dihapus.
+
+Untuk mendapatkan akses kembali,
+silakan join ulang ke grup kami!
+```"""
+            await user.send_message(text, parse_mode="Markdown")
         except:
             pass
