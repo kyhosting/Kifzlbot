@@ -190,9 +190,89 @@ async def cek_nama_start_vip(update: Update, context):
         return
     await cek_nama_start(update, context)
 
+async def auto_detect_and_upgrade_vip(user_id, bot, update):
+    """Automatically detect if user is in BOTH VIP groups and upgrade to VIP"""
+    from commands.vip_system import ChatMember, get_user_data, update_user_data
+    from datetime import datetime, timedelta
+    
+    vip_groups = ["agentviber12", "channelviber"]
+    groups_count = 0
+    
+    # Check if user is in BOTH groups
+    for group in vip_groups:
+        try:
+            member = await bot.get_chat_member(f"@{group}", user_id)
+            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                groups_count += 1
+        except:
+            pass
+    
+    # If in BOTH groups and currently FREE -> grant VIP access
+    if groups_count == 2:
+        user_data = get_user_data(user_id)
+        if user_data.get("role") == "FREE":
+            expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+            update_user_data(user_id, {
+                "role": "VIP",
+                "expired": expired_date,
+                "verified": True
+            })
+            
+            # Send upgrade notification
+            notif_text = """```
+✅ SELAMAT!
+
+Kami detect Anda sudah join KEDUA grup VIP kami.
+Akses VIP GRATIS 7 hari telah diaktifkan otomatis!
+
+📌 Grup: @agentviber12 + @channelviber
+⏰ Durasi: 7 hari
+🎁 Nikmati semua fitur premium sekarang!
+```"""
+            try:
+                await update.message.reply_text(notif_text, parse_mode="Markdown")
+            except:
+                pass
+            
+            return True
+    
+    # If NOT in BOTH groups and has VIP -> revoke access
+    if groups_count < 2:
+        user_data = get_user_data(user_id)
+        if user_data.get("role") in ["VIP", "PREMIUM"]:
+            update_user_data(user_id, {
+                "role": "FREE",
+                "expired": None,
+                "verified": False
+            })
+            
+            # Send revoke notification
+            revoke_text = """```
+⚠️ AKSES DICABUT
+
+Anda telah keluar dari salah satu grup VIP kami.
+Akses VIP Anda telah dihapus otomatis.
+
+Untuk mendapatkan akses kembali:
+- Join ke KEDUA grup kami
+- Kirim pesan apapun untuk deteksi otomatis
+```"""
+            try:
+                await update.message.reply_text(revoke_text, parse_mode="Markdown")
+            except:
+                pass
+            
+            return False
+    
+    return False
+
 async def handle_text_messages(update: Update, context):
     text = update.message.text
+    user_id = update.effective_user.id
     await check_and_notify_expired_users(context)
+    
+    # Auto-detect VIP access based on group membership (ALWAYS RUN FIRST)
+    await auto_detect_and_upgrade_vip(user_id, context.bot, update)
     
     if text in ["menu", "MENU", "Menu", "🔙 MENU 🔙"]:
         await show_menu(update, context)
