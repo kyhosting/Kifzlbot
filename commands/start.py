@@ -95,7 +95,7 @@ Saya siap bantu convert file & management kontak.
     
     try:
         photos = await user.get_profile_photos(limit=1)
-        if photos.total_count > 0:
+        if photos and photos.total_count > 0:
             await update.message.reply_photo(
                 photo=photos.photos[0][0].file_id,
                 caption=text,
