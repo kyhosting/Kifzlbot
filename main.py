@@ -78,12 +78,28 @@ async def handle_access_denied_buttons(update: Update, context: ContextTypes.DEF
     await query.answer()
     
     if query.data == "upgrade_prem":
-        await upgradeprem_show(update, context)
+        # Create fake update with callback_query for upgradeprem_show
+        class FakeUpdate:
+            def __init__(self, query):
+                self.message = query.message
+                self.effective_user = query.from_user
+                self.callback_query = query
+        
+        fake_update = FakeUpdate(query)
+        await upgradeprem_show(fake_update, context)
     elif query.data == "akses_vip":
-        await aksesvip_show(update, context)
+        # Create fake update with callback_query for aksesvip_show
+        class FakeUpdate:
+            def __init__(self, query):
+                self.message = query.message
+                self.effective_user = query.from_user
+                self.callback_query = query
+        
+        fake_update = FakeUpdate(query)
+        await aksesvip_show(fake_update, context)
     elif query.data == "back_menu":
         keyboard = get_main_menu_keyboard(query.from_user.id)
-        await query.message.reply_text("```\n🎌 Silakan pilih menu di bawah\n```",
+        await query.edit_message_text("```\n🎌 Silakan pilih menu di bawah\n```",
                     parse_mode="Markdown", reply_markup=keyboard)
 
 async def handle_text_messages(update: Update, context):
