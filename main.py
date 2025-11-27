@@ -15,7 +15,7 @@ from telegram import ChatMemberUpdated
 
 from commands import vip_system
 from commands.start import start_command
-from commands.menu import show_menu
+from commands.menu import show_menu, get_main_menu_keyboard
 from commands.status import check_status
 from commands.verify import handle_verify_callback, handle_verify_back, handle_member_join
 from commands.expiry_checker import check_and_notify_expired_users
@@ -78,7 +78,7 @@ async def handle_text_messages(update: Update, context):
     elif text == "🜲 STATUS 🜲":
         await check_status(update, context)
     else:
-        keyboard = vip_system.get_main_menu_keyboard(update.effective_user.id)
+        keyboard = get_main_menu_keyboard(update.effective_user.id)
         await update.message.reply_text(
             "```\nPerintah tidak dikenali.\nSilakan pilih menu yang tersedia.\n```",
             parse_mode="Markdown",
