@@ -7,14 +7,19 @@ def get_main_menu_keyboard(user_id):
     
     keyboard = [
         [KeyboardButton("🜲 STATUS 🜲")],
-        [KeyboardButton("💎 UPGRADE PREMIUM 💎"), KeyboardButton("🎟 AKSES VIP 🎟")],
+    ]
+    
+    if not is_owner:
+        keyboard.append([KeyboardButton("💎 UPGRADE PREMIUM 💎"), KeyboardButton("🎟 AKSES VIP 🎟")])
+    
+    keyboard.extend([
         [KeyboardButton("🜲 MSG TO TXT 🜲"), KeyboardButton("🜲 TXT TO VCF 🜲")],
         [KeyboardButton("🜲 VCF TO TXT 🜲"), KeyboardButton("🜲 XLS TO VCF 🜲")],
         [KeyboardButton("🜲 RAPIKAN TXT 🜲"), KeyboardButton("🜲 GABUNG FILE 🜲")],
         [KeyboardButton("🜲 HITUNG KONTAK 🜲"), KeyboardButton("🜲 CEK NAMA 🜲")],
         [KeyboardButton("🜲 CREATE ADM/NAVY 🜲"), KeyboardButton("🜲 SPLIT FILE 🜲")],
         [KeyboardButton("🎁 REDEEM CODE 🎁")],
-    ]
+    ])
     
     if is_owner:
         keyboard.append([KeyboardButton("🜲 MENU OWNER 🜲")])
