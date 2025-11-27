@@ -5,6 +5,8 @@ from commands.vip_system import get_user_role, get_user_data, update_user_data, 
 
 async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if not query:
+        return
     await query.answer()
     
     user_id = query.from_user.id
@@ -55,20 +57,27 @@ Nikmati semua fitur premium bot kami.
 
 async def handle_verify_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if not query:
+        return
     await query.answer()
     
     from commands.menu import get_main_menu_keyboard
     keyboard = get_main_menu_keyboard(query.from_user.id)
     
-    await query.message.reply_text("")
-    await query.message.reply_text("```\n🎌 Silakan pilih menu di bawah\n```",
-                parse_mode="Markdown", reply_markup=keyboard)
+    if query.message:
+        await query.message.reply_text("")
+        await query.message.reply_text("```\n🎌 Silakan pilih menu di bawah\n```",
+                    parse_mode="Markdown", reply_markup=keyboard)
 
 async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_member_update = update.my_chat_member
+    if not chat_member_update:
+        return
     
     if chat_member_update.new_chat_member.status == ChatMember.MEMBER:
         user = chat_member_update.from_user
+        if not user:
+            return
         user_id = user.id
         
         if user_id == OWNER_ID:

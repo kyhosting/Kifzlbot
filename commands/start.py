@@ -6,6 +6,8 @@ from commands.menu import get_main_menu_keyboard
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    if not user:
+        return
     user_id = user.id
     name = user.full_name or "User"
     username = f"@{user.username}" if user.username else "Tidak ada"
@@ -87,6 +89,9 @@ Saya siap bantu convert file & management kontak.
 ```"""
     
     keyboard = get_main_menu_keyboard(user_id)
+    
+    if not update.message:
+        return
     
     try:
         photos = await user.get_profile_photos(limit=1)

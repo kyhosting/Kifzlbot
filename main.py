@@ -70,6 +70,8 @@ def ensure_json_files():
             logger.info(f"Created {file}")
 
 async def handle_text_messages(update: Update, context):
+    if not update.message or not update.message.text:
+        return
     text = update.message.text
     await check_and_notify_expired_users(context)
     
@@ -78,12 +80,14 @@ async def handle_text_messages(update: Update, context):
     elif text == "🜲 STATUS 🜲":
         await check_status(update, context)
     else:
-        keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await update.message.reply_text(
-            "```\nPerintah tidak dikenali.\nSilakan pilih menu yang tersedia.\n```",
-            parse_mode="Markdown",
-            reply_markup=keyboard
-        )
+        user = update.effective_user
+        if user:
+            keyboard = get_main_menu_keyboard(user.id)
+            await update.message.reply_text(
+                "```\nPerintah tidak dikenali.\nSilakan pilih menu yang tersedia.\n```",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
 
 def verify_bot_ownership():
     """Verify bot name hasn't been changed - ANTI-THEFT PROTECTION"""
