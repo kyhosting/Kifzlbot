@@ -1,11 +1,15 @@
 import json
 import os
-from datetime import datetime
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from datetime import datetime, timedelta
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatMember
 from telegram.ext import ContextTypes
 
 OWNER_ID = 8317563450
 VIP_GROUPS = ["https://t.me/agentviber12", "https://t.me/channelviber"]
+VIP_GROUP_IDS = []
+
+def get_vip_group_ids():
+    return VIP_GROUP_IDS or []
 
 def load_users():
     try:
@@ -129,3 +133,28 @@ def clear_session(user_id):
         del sessions[user_str]
         with open("sessions.json", "w") as f:
             json.dump(sessions, f, indent=2)
+
+async def check_user_in_groups(user_id, application):
+    """Check if user is member of VIP groups and auto-grant VIP access"""
+    try:
+        group_ids = ["-1001234567890", "-1001987654321"]
+        for group_id in group_ids:
+            try:
+                member = await application.bot.get_chat_member(group_id, user_id)
+                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                    grant_vip_7days(user_id)
+                    return True
+            except:
+                pass
+        return False
+    except:
+        return False
+
+def grant_vip_7days(user_id):
+    """Auto-grant VIP access for 7 days"""
+    expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+    update_user_data(user_id, {
+        "role": "VIP",
+        "expired": expired_date,
+        "auto_verified": True
+    })
