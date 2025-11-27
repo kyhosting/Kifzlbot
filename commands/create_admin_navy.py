@@ -2,7 +2,7 @@ import os
 import re
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
-from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
+from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data, check_access_with_group_verify
 from commands.menu import get_main_menu_keyboard
 
 ASK_MODE, ASK_ADMIN_NUM, ASK_NAVY_NUM, ASK_FILENAME, ASK_CONTACTNAME, ASK_BLOCK_INPUT = range(6)
@@ -24,9 +24,7 @@ END:VCARD
 async def create_admin_navy_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
-    if not check_access(user_id, "VIP"):
-        user_role = get_user_role(user_id)
-        await send_access_denied(update, user_role, "VIP")
+    if not await check_access_with_group_verify(user_id, "VIP", context.bot, update):
         return ConversationHandler.END
     
     mode_keyboard = ReplyKeyboardMarkup([
