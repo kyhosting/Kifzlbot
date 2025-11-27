@@ -15,7 +15,7 @@ from telegram import ChatMemberUpdated
 
 from commands import vip_system
 from commands.start import start_command
-from commands.menu import show_menu, get_main_menu_keyboard
+from commands.menu import show_menu
 from commands.status import check_status
 from commands.verify import handle_verify_callback, handle_verify_back, handle_member_join
 from commands.expiry_checker import check_and_notify_expired_users
@@ -57,7 +57,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Suppress httpx INFO logs
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("telegram").setLevel(logging.WARNING)
 
@@ -70,50 +69,42 @@ def ensure_json_files():
             logger.info(f"Created {file}")
 
 async def handle_text_messages(update: Update, context):
-    if not update.message or not update.message.text:
-        return
     text = update.message.text
     await check_and_notify_expired_users(context)
-    
+
     if text in ["menu", "MENU", "Menu", "🔙 MENU 🔙"]:
         await show_menu(update, context)
     elif text == "🜲 STATUS 🜲":
         await check_status(update, context)
     else:
-        user = update.effective_user
-        if user:
-            keyboard = get_main_menu_keyboard(user.id)
-            await update.message.reply_text(
-                "```\nPerintah tidak dikenali.\nSilakan pilih menu yang tersedia.\n```",
-                parse_mode="Markdown",
-                reply_markup=keyboard
-            )
+        keyboard = vip_system.get_main_menu_keyboard(update.effective_user.id)
+        await update.message.reply_text(
+            "```\nPerintah tidak dikenali.\nSilakan pilih menu yang tersedia.\n```",
+            parse_mode="Markdown",
+            reply_markup=keyboard
+        )
 
 def verify_bot_ownership():
     """Verify bot name hasn't been changed - ANTI-THEFT PROTECTION"""
     required_creator = "@KIFZLDEV"
     tampering_detected = False
-    
-    # Check start.py for creator name in specific location
+
     try:
         with open("commands/start.py", "r", encoding="utf-8") as f:
             start_content = f.read()
-            # Look for the specific line with creator info
             if "(BY @KIFZLDEV)" not in start_content:
                 tampering_detected = True
     except:
         tampering_detected = True
-    
-    # Check menu.py for creator name in specific location
+
     try:
         with open("commands/menu.py", "r", encoding="utf-8") as f:
             menu_content = f.read()
-            # Look for the specific line with creator info
             if "(BY @KIFZLDEV)" not in menu_content:
                 tampering_detected = True
     except:
         tampering_detected = True
-    
+
     if tampering_detected:
         print("\n" + "="*50)
         print("❌ CRITICAL ERROR - BOT OWNERSHIP VERIFICATION FAILED!")
@@ -129,16 +120,15 @@ def main():
     print("\n" + "="*50)
     print("⏳ Initial KIFZL DEV BOT Initializing...")
     print("="*50 + "\n")
-    
+
     print("📦 Loading modules...")
     ensure_json_files()
-    
+
     print("🔍 Verifying project integrity...")
     print("✅ Project integrity: VERIFIED")
     print("✅ All credits: INTACT")
     print("👨‍💻 Created by: @KIFZLDEV\n")
-    
-    # ⚠️ ANTI-THEFT PROTECTION - ENFORCE BOT NAME
+
     print("🔐 VERIFYING BOT OWNERSHIP...")
     try:
         verify_bot_ownership()
@@ -150,19 +140,22 @@ def main():
     except Exception as e:
         print(f"🛑 STARTUP BLOCKED: {e}\n")
         return
-    
+
     print("⚙️ Bot step initialized...")
     print("📥 Loading commands...\n")
-    
+
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     if not token:
         logger.error("TELEGRAM_BOT_TOKEN not found in environment variables!")
         return
-    
+
     application = Application.builder().token(token).build()
-    
+
     application.add_handler(CommandHandler("start", start_command))
-    
+    application.add_handler(CommandHandler("upgradeprem", upgradeprem_show))
+    application.add_handler(CommandHandler("aksesvip", aksesvip_show))
+    application.add_handler(CommandHandler("redeem", redeem_start))
+
     msg_to_txt_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start)],
         states={
@@ -171,7 +164,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), msg_to_txt_filename)],
     )
-    
+
     rapikan_txt_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 RAPIKAN TXT 🜲$"), rapikan_txt_start)],
         states={
@@ -179,7 +172,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), rapikan_txt_file)],
     )
-    
+
     txt_to_vcf_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 TXT TO VCF 🜲$"), txt_to_vcf_start)],
         states={
@@ -189,7 +182,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), txt_to_vcf_contactname)],
     )
-    
+
     vcf_to_txt_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 VCF TO TXT 🜲$"), vcf_to_txt_start)],
         states={
@@ -197,7 +190,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), vcf_to_txt_file)],
     )
-    
+
     xls_to_vcf_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 XLS TO VCF 🜲$"), xls_to_vcf_start)],
         states={
@@ -207,7 +200,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), xls_to_vcf_contactname)],
     )
-    
+
     hitung_kontak_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 HITUNG KONTAK 🜲$"), hitung_kontak_start)],
         states={
@@ -215,7 +208,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), hitung_kontak_file)],
     )
-    
+
     cek_nama_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 CEK NAMA 🜲$"), cek_nama_start)],
         states={
@@ -223,7 +216,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), cek_nama_file)],
     )
-    
+
     gabung_file_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 GABUNG FILE 🜲$"), gabung_file_start)],
         states={
@@ -232,7 +225,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), gabung_file_merge)],
     )
-    
+
     split_file_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 SPLIT FILE 🜲$"), split_file_start)],
         states={
@@ -245,7 +238,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), split_process)],
     )
-    
+
     create_admin_navy_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 CREATE ADM/NAVY 🜲$"), create_admin_navy_start)],
         states={
@@ -258,7 +251,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), create_admin_navy_generate)],
     )
-    
+
     redeem_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🎁 REDEEM CODE 🎁$"), redeem_start)],
         states={
@@ -266,7 +259,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^❌ BATAL ❌$"), redeem_process)],
     )
-    
+
     menu_owner_conv = ConversationHandler(
         entry_points=[MessageHandler(filters.Regex("^🜲 MENU OWNER 🜲$"), menu_owner_start)],
         states={
@@ -281,7 +274,7 @@ def main():
         },
         fallbacks=[MessageHandler(filters.Regex("^🔙 KEMBALI$"), menu_owner_start)],
     )
-    
+
     application.add_handler(msg_to_txt_conv)
     application.add_handler(rapikan_txt_conv)
     application.add_handler(txt_to_vcf_conv)
@@ -294,25 +287,22 @@ def main():
     application.add_handler(create_admin_navy_conv)
     application.add_handler(redeem_conv)
     application.add_handler(menu_owner_conv)
-    
-    application.add_handler(MessageHandler(filters.Regex("^💎 UPGRADE PREMIUM 💎$"), upgradeprem_show))
-    application.add_handler(MessageHandler(filters.Regex("^🎟 AKSES VIP 🎟$"), aksesvip_show))
-    
+
     application.add_handler(CallbackQueryHandler(handle_premium_callback, pattern="^prem_"))
     application.add_handler(CallbackQueryHandler(handle_aksesvip_callback, pattern="^akses_"))
     application.add_handler(CallbackQueryHandler(handle_verify_callback, pattern="^verify_user$"))
     application.add_handler(CallbackQueryHandler(handle_verify_back, pattern="^verify_back$"))
-    
+
     application.add_handler(TypeHandler(ChatMemberUpdated, handle_member_join))
-    
+
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_messages))
-    
+
     print("="*50)
     print("🚀 Bot launched! 🚀 SUPPORT TEAM & PARTNER")
     print("🤝 SUPPORT TEMAN DEV")
     print("📞 Support: @KIFZLDEV")
     print("="*50 + "\n")
-    
+
     logger.info("Bot started successfully!")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
