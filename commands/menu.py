@@ -7,6 +7,7 @@ def get_main_menu_keyboard(user_id):
     
     keyboard = [
         [KeyboardButton("🜲 STATUS 🜲")],
+        [KeyboardButton("💎 UPGRADE PREMIUM 💎"), KeyboardButton("🎟 AKSES VIP 🎟")],
         [KeyboardButton("🜲 MSG TO TXT 🜲"), KeyboardButton("🜲 TXT TO VCF 🜲")],
         [KeyboardButton("🜲 VCF TO TXT 🜲"), KeyboardButton("🜲 XLS TO VCF 🜲")],
         [KeyboardButton("🜲 CREATE ADM/NAVY 🜲")],
