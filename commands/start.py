@@ -77,7 +77,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     groups_count = await check_and_restore_vip(user_id, context.bot, context)
     role = get_user_role(user_id)
     
-    # Check if user is NOT in both groups - show warning
+    # Check if user is NOT in both groups - show warning and RETURN
     if groups_count < 2 and role == "FREE":
         warning_text = """```
 ⚠️ ANDA BELUM BISA MENGGUNAKAN FITUR VIP
@@ -99,6 +99,7 @@ setelah join kedua grup.
             await update.message.reply_text(warning_text, parse_mode="Markdown", reply_markup=keyboard)
         except:
             pass
+        return
     
     expired = user_data.get("expired")
     if expired:
