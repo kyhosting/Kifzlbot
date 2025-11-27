@@ -197,6 +197,7 @@ async def auto_detect_and_upgrade_vip(user_id, bot, update):
     
     vip_groups = ["agentviber12", "channelviber"]
     groups_count = 0
+    group_info = []
     
     # Check if user is in BOTH groups
     for group in vip_groups:
@@ -204,65 +205,69 @@ async def auto_detect_and_upgrade_vip(user_id, bot, update):
             member = await bot.get_chat_member(f"@{group}", user_id)
             if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
                 groups_count += 1
-        except:
-            pass
+                group_info.append(f"✅ {group}")
+            else:
+                group_info.append(f"❌ {group}")
+        except Exception as e:
+            group_info.append(f"❌ {group} (error)")
+    
+    user_data = get_user_data(user_id)
+    current_role = user_data.get("role", "FREE")
     
     # If in BOTH groups and currently FREE -> grant VIP access
-    if groups_count == 2:
-        user_data = get_user_data(user_id)
-        if user_data.get("role") == "FREE":
-            expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
-            update_user_data(user_id, {
-                "role": "VIP",
-                "expired": expired_date,
-                "verified": True
-            })
-            
-            # Send upgrade notification
-            notif_text = """```
+    if groups_count == 2 and current_role == "FREE":
+        expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+        update_user_data(user_id, {
+            "role": "VIP",
+            "expired": expired_date,
+            "verified": True
+        })
+        
+        # Send upgrade notification
+        notif_text = """```
 ✅ SELAMAT!
 
-Kami detect Anda sudah join KEDUA grup VIP kami.
+Kami detect Anda sudah join KEDUA grup VIP kami:
+""" + "\n".join(group_info) + """
+
 Akses VIP GRATIS 7 hari telah diaktifkan otomatis!
 
-📌 Grup: @agentviber12 + @channelviber
 ⏰ Durasi: 7 hari
 🎁 Nikmati semua fitur premium sekarang!
 ```"""
-            try:
-                await update.message.reply_text(notif_text, parse_mode="Markdown")
-            except:
-                pass
-            
-            return True
+        try:
+            await update.message.reply_text(notif_text, parse_mode="Markdown")
+        except Exception as e:
+            print(f"Error sending upgrade notif: {e}")
+        
+        return True
     
-    # If NOT in BOTH groups and has VIP -> revoke access
-    if groups_count < 2:
-        user_data = get_user_data(user_id)
-        if user_data.get("role") in ["VIP", "PREMIUM"]:
-            update_user_data(user_id, {
-                "role": "FREE",
-                "expired": None,
-                "verified": False
-            })
-            
-            # Send revoke notification
-            revoke_text = """```
+    # If NOT in BOTH groups and has VIP/PREMIUM -> revoke access
+    if groups_count < 2 and current_role in ["VIP", "PREMIUM"]:
+        update_user_data(user_id, {
+            "role": "FREE",
+            "expired": None,
+            "verified": False
+        })
+        
+        # Send revoke notification
+        revoke_text = """```
 ⚠️ AKSES DICABUT
 
 Anda telah keluar dari salah satu grup VIP kami.
-Akses VIP Anda telah dihapus otomatis.
+Status grup Anda:
+""" + "\n".join(group_info) + """
 
 Untuk mendapatkan akses kembali:
-- Join ke KEDUA grup kami
-- Kirim pesan apapun untuk deteksi otomatis
+1. Join ke KEDUA grup kami
+2. Kirim pesan apapun untuk deteksi otomatis
 ```"""
-            try:
-                await update.message.reply_text(revoke_text, parse_mode="Markdown")
-            except:
-                pass
-            
-            return False
+        try:
+            await update.message.reply_text(revoke_text, parse_mode="Markdown")
+        except Exception as e:
+            print(f"Error sending revoke notif: {e}")
+        
+        return False
     
     return False
 
@@ -272,7 +277,10 @@ async def handle_text_messages(update: Update, context):
     await check_and_notify_expired_users(context)
     
     # Auto-detect VIP access based on group membership (ALWAYS RUN FIRST)
-    await auto_detect_and_upgrade_vip(user_id, context.bot, update)
+    try:
+        await auto_detect_and_upgrade_vip(user_id, context.bot, update)
+    except Exception as e:
+        print(f"Auto-detect error: {e}")
     
     if text in ["menu", "MENU", "Menu", "🔙 MENU 🔙"]:
         await show_menu(update, context)

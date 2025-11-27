@@ -75,7 +75,10 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_data = get_user_data(user_id)
     
     groups_count = await check_and_restore_vip(user_id, context.bot, context)
-    role = get_user_role(user_id)
+    
+    # Reload user data after VIP check
+    user_data = get_user_data(user_id)
+    role = user_data.get("role", "FREE")
     
     # Check if user is NOT in both groups - show warning and RETURN
     if groups_count < 2 and role == "FREE":
