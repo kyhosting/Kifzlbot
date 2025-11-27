@@ -7,7 +7,6 @@ from commands.menu import get_main_menu_keyboard
 async def check_and_restore_vip(user_id, bot, context):
     """Check if user in BOTH VIP groups and grant/revoke access accordingly"""
     vip_groups = ["agentviber12", "channelviber"]
-    in_both_groups = True
     groups_count = 0
     
     # Check if user is in BOTH groups
@@ -54,6 +53,9 @@ async def check_and_restore_vip(user_id, bot, context):
             "expired": None,
             "verified": False
         })
+    
+    # Return groups_count so we can show message if needed
+    return groups_count
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -72,8 +74,31 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         })
         user_data = get_user_data(user_id)
     
-    await check_and_restore_vip(user_id, context.bot, context)
+    groups_count = await check_and_restore_vip(user_id, context.bot, context)
     role = get_user_role(user_id)
+    
+    # Check if user is NOT in both groups - show warning
+    if groups_count < 2 and role == "FREE":
+        warning_text = """```
+⚠️ ANDA BELUM BISA MENGGUNAKAN FITUR VIP
+
+Untuk mendapatkan akses VIP GRATIS 7 hari,
+silakan join ke KEDUA grup kami terlebih dahulu:
+
+📌 Grup 1: @agentviber12
+📌 Grup 2: @channelviber
+
+Setelah join KEDUA grup, gunakan /start lagi
+untuk mendapatkan akses VIP otomatis!
+
+✨ Akses akan diberikan secara otomatis
+setelah join kedua grup.
+```"""
+        keyboard = get_main_menu_keyboard(user_id)
+        try:
+            await update.message.reply_text(warning_text, parse_mode="Markdown", reply_markup=keyboard)
+        except:
+            pass
     
     expired = user_data.get("expired")
     if expired:
