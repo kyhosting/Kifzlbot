@@ -9,28 +9,37 @@ async def check_and_restore_vip(user_id, bot, context):
     vip_groups = ["agentviber12", "channelviber"]
     groups_count = 0
     
+    print(f"🔍 [VIP CHECK] User {user_id} - Checking group membership...")
+    
     # Check if user is in BOTH groups
     for group in vip_groups:
         try:
             member = await bot.get_chat_member(f"@{group}", user_id)
             if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
                 groups_count += 1
-        except:
-            pass
+                print(f"  ✅ User {user_id} IS in @{group} ({member.status})")
+            else:
+                print(f"  ❌ User {user_id} NOT in @{group} ({member.status})")
+        except Exception as e:
+            print(f"  ❌ User {user_id} ERROR checking @{group}: {str(e)}")
     
     user_data = get_user_data(user_id)
+    current_role = user_data.get("role", "FREE")
+    
+    print(f"📊 [VIP CHECK] Groups found: {groups_count}/2 | Current role: {current_role}")
     
     # If in BOTH groups and currently FREE -> grant VIP access
-    if groups_count == 2 and user_data.get("role") == "FREE":
+    if groups_count == 2 and current_role == "FREE":
         expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
         update_user_data(user_id, {
             "role": "VIP",
             "expired": expired_date,
             "verified": True
         })
+        print(f"✅ [VIP GRANTED] User {user_id} upgraded to VIP for 7 days")
     
     # If in BOTH groups and VIP but expired -> restore VIP access
-    elif groups_count == 2 and user_data.get("role") == "VIP":
+    elif groups_count == 2 and current_role == "VIP":
         expired = user_data.get("expired")
         if isinstance(expired, str):
             try:
@@ -45,14 +54,16 @@ async def check_and_restore_vip(user_id, bot, context):
                 "expired": expired_date,
                 "verified": True
             })
+            print(f"✅ [VIP RESTORED] User {user_id} VIP access restored")
     
     # If NOT in BOTH groups and has VIP/PREMIUM -> revoke access
-    elif groups_count < 2 and user_data.get("role") in ["VIP", "PREMIUM"]:
+    elif groups_count < 2 and current_role in ["VIP", "PREMIUM"]:
         update_user_data(user_id, {
             "role": "FREE",
             "expired": None,
             "verified": False
         })
+        print(f"⚠️ [VIP REVOKED] User {user_id} VIP access revoked (left groups)")
     
     # Return groups_count so we can show message if needed
     return groups_count
