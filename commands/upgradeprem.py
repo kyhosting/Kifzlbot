@@ -1,7 +1,6 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import ContextTypes, CallbackQueryHandler
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes
 from commands.menu import get_main_menu_keyboard
-from commands.vip_system import OWNER_ID
 
 PACKAGES = {
     "PREM_DAY": {"name": "1 Hari", "duration": "24 Jam", "price": 5000},
@@ -16,9 +15,9 @@ async def upgradeprem_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 Pilih paket premium yang sesuai:
 
-1 HARI    - Rp 5.000
-7 HARI    - Rp 25.000
-30 HARI   - Rp 75.000
+🔸 1 HARI    - Rp 5.000
+🔸 7 HARI    - Rp 25.000
+🔸 30 HARI   - Rp 75.000
 
 Pilih paket di bawah ini:
 ───────────────────────────────────────
@@ -26,10 +25,10 @@ Pilih paket di bawah ini:
     
     keyboard = [
         [
-            InlineKeyboardButton("1 Hari", callback_data="prem_select_PREM_DAY"),
-            InlineKeyboardButton("7 Hari", callback_data="prem_select_PREM_WEEK"),
+            InlineKeyboardButton("🕐 1 Hari", callback_data="prem_select_PREM_DAY"),
+            InlineKeyboardButton("📅 7 Hari", callback_data="prem_select_PREM_WEEK"),
         ],
-        [InlineKeyboardButton("30 Hari", callback_data="prem_select_PREM_MONTH")],
+        [InlineKeyboardButton("📆 30 Hari", callback_data="prem_select_PREM_MONTH")],
         [InlineKeyboardButton("❌ Batalkan", callback_data="prem_cancel")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -38,6 +37,8 @@ Pilih paket di bawah ini:
 
 async def handle_premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if not query:
+        return
     await query.answer()
     
     if query.data == "prem_cancel":
