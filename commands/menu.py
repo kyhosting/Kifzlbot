@@ -10,10 +10,10 @@ def get_main_menu_keyboard(user_id):
         [KeyboardButton("💎 UPGRADE PREMIUM 💎"), KeyboardButton("🎟 AKSES VIP 🎟")],
         [KeyboardButton("🜲 MSG TO TXT 🜲"), KeyboardButton("🜲 TXT TO VCF 🜲")],
         [KeyboardButton("🜲 VCF TO TXT 🜲"), KeyboardButton("🜲 XLS TO VCF 🜲")],
-        [KeyboardButton("🜲 CREATE ADM/NAVY 🜲")],
         [KeyboardButton("🜲 RAPIKAN TXT 🜲"), KeyboardButton("🜲 GABUNG FILE 🜲")],
         [KeyboardButton("🜲 HITUNG KONTAK 🜲"), KeyboardButton("🜲 CEK NAMA 🜲")],
-        [KeyboardButton("🜲 SPLIT FILE 🜲"), KeyboardButton("🎁 REDEEM CODE 🎁")],
+        [KeyboardButton("🜲 CREATE ADM/NAVY 🜲"), KeyboardButton("🜲 SPLIT FILE 🜲")],
+        [KeyboardButton("🎁 REDEEM CODE 🎁")],
     ]
     
     if is_owner:
