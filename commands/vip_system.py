@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ChatMember
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatMember
 from telegram.ext import ContextTypes
 
 OWNER_ID = 8317563450
@@ -74,11 +74,11 @@ mendapatkan akses:
 ```"""
     
     keyboard = [
-        [KeyboardButton("💎 UPGRADE PREMIUM 💎")],
-        [KeyboardButton("🎟 AKSES VIP 🎟")],
-        [KeyboardButton("🔙 MENU 🔙")]
+        [InlineKeyboardButton("💎 UPGRADE PREMIUM 💎", callback_data="upgrade_prem")],
+        [InlineKeyboardButton("🎟 AKSES VIP 🎟", callback_data="akses_vip")],
+        [InlineKeyboardButton("🔙 MENU 🔙", callback_data="back_menu")]
     ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    reply_markup = InlineKeyboardMarkup(keyboard)
     
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
@@ -100,9 +100,11 @@ Grup VIP:
 ```"""
     
     keyboard = [
-        [KeyboardButton("👥 Join Grup VIP"), KeyboardButton("🔙 MENU 🔙")]
+        [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12")],
+        [InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
+        [InlineKeyboardButton("🔙 MENU 🔙", callback_data="back_menu")]
     ]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    reply_markup = InlineKeyboardMarkup(keyboard)
     
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
