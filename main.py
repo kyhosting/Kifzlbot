@@ -99,6 +99,97 @@ async def handle_access_denied_buttons(update: Update, context: ContextTypes.DEF
         await query.edit_message_text("```\n🎌 Silakan pilih menu di bawah\n```",
                     parse_mode="Markdown", reply_markup=keyboard)
 
+async def check_vip_access_wrapper(handler_func, required_role="VIP"):
+    """Create wrapper that checks access before executing handler"""
+    async def wrapper(update: Update, context):
+        user_id = update.effective_user.id
+        if not await vip_system.check_access_with_group_verify(user_id, required_role, context.bot, update):
+            user_role = vip_system.get_user_role(user_id)
+            await vip_system.send_access_denied(update, user_role, required_role)
+            return
+        await handler_func(update, context)
+    return wrapper
+
+async def msg_to_txt_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await msg_to_txt_start(update, context)
+
+async def rapikan_txt_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await rapikan_txt_start(update, context)
+
+async def txt_to_vcf_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await txt_to_vcf_start(update, context)
+
+async def vcf_to_txt_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await vcf_to_txt_start(update, context)
+
+async def xls_to_vcf_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await xls_to_vcf_start(update, context)
+
+async def create_admin_navy_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await create_admin_navy_start(update, context)
+
+async def gabung_file_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await gabung_file_start(update, context)
+
+async def split_file_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await split_file_start(update, context)
+
+async def hitung_kontak_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await hitung_kontak_start(update, context)
+
+async def cek_nama_start_vip(update: Update, context):
+    user_id = update.effective_user.id
+    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
+        user_role = vip_system.get_user_role(user_id)
+        await vip_system.send_access_denied(update, user_role, "VIP")
+        return
+    await cek_nama_start(update, context)
+
 async def handle_text_messages(update: Update, context):
     text = update.message.text
     await check_and_notify_expired_users(context)
@@ -190,7 +281,7 @@ def main():
     application.add_handler(CommandHandler("start", start_command))
     
     msg_to_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start_vip)],
         states={
             MSG_ASK_MESSAGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, msg_to_txt_message)],
             MSG_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, msg_to_txt_filename)],
@@ -199,7 +290,7 @@ def main():
     )
     
     rapikan_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 RAPIKAN TXT 🜲$"), rapikan_txt_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 RAPIKAN TXT 🜲$"), rapikan_txt_start_vip)],
         states={
             RAPIKAN_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, rapikan_txt_file)],
         },
@@ -207,7 +298,7 @@ def main():
     )
     
     txt_to_vcf_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 TXT TO VCF 🜲$"), txt_to_vcf_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 TXT TO VCF 🜲$"), txt_to_vcf_start_vip)],
         states={
             TXT_VCF_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, txt_to_vcf_file)],
             TXT_VCF_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, txt_to_vcf_filename)],
@@ -217,7 +308,7 @@ def main():
     )
     
     vcf_to_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 VCF TO TXT 🜲$"), vcf_to_txt_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 VCF TO TXT 🜲$"), vcf_to_txt_start_vip)],
         states={
             VCF_TXT_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, vcf_to_txt_file)],
         },
@@ -225,7 +316,7 @@ def main():
     )
     
     xls_to_vcf_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 XLS TO VCF 🜲$"), xls_to_vcf_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 XLS TO VCF 🜲$"), xls_to_vcf_start_vip)],
         states={
             XLS_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, xls_to_vcf_file)],
             XLS_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, xls_to_vcf_filename)],
@@ -235,7 +326,7 @@ def main():
     )
     
     hitung_kontak_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 HITUNG KONTAK 🜲$"), hitung_kontak_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 HITUNG KONTAK 🜲$"), hitung_kontak_start_vip)],
         states={
             HITUNG_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, hitung_kontak_file)],
         },
@@ -243,7 +334,7 @@ def main():
     )
     
     cek_nama_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 CEK NAMA 🜲$"), cek_nama_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 CEK NAMA 🜲$"), cek_nama_start_vip)],
         states={
             CEK_NAMA_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, cek_nama_file)],
         },
@@ -251,7 +342,7 @@ def main():
     )
     
     gabung_file_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 GABUNG FILE 🜲$"), gabung_file_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 GABUNG FILE 🜲$"), gabung_file_start_vip)],
         states={
             ASK_FILES: [MessageHandler(filters.Document.ALL | filters.TEXT, gabung_file_collect)],
             GABUNG_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, gabung_file_merge)],
@@ -260,7 +351,7 @@ def main():
     )
     
     split_file_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 SPLIT FILE 🜲$"), split_file_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 SPLIT FILE 🜲$"), split_file_start_vip)],
         states={
             SPLIT_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, split_file_receive)],
             ASK_OUTPUT_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, split_file_output_name)],
@@ -273,7 +364,7 @@ def main():
     )
     
     create_admin_navy_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 CREATE ADM/NAVY 🜲$"), create_admin_navy_start)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 CREATE ADM/NAVY 🜲$"), create_admin_navy_start_vip)],
         states={
             ASK_MODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, create_admin_navy_mode)],
             ASK_ADMIN_NUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, create_admin_navy_admin)],
