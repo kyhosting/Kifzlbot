@@ -109,7 +109,7 @@ Grup VIP:
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
 async def check_access_with_group_verify(user_id, required_role, bot, update):
-    """Check access AND verify user is still in VIP groups"""
+    """Check access AND verify user is STILL in BOTH VIP groups"""
     user_role = get_user_role(user_id)
     
     if user_role == "OWNER":
@@ -119,18 +119,19 @@ async def check_access_with_group_verify(user_id, required_role, bot, update):
         return False
     
     vip_groups = ["agentviber12", "channelviber"]
-    is_in_group = False
+    groups_count = 0
     
+    # Check if user is in BOTH groups
     for group in vip_groups:
         try:
             member = await bot.get_chat_member(f"@{group}", user_id)
             if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                is_in_group = True
-                break
+                groups_count += 1
         except:
             pass
     
-    if not is_in_group:
+    # User must be in BOTH groups
+    if groups_count < 2:
         update_user_data(user_id, {
             "role": "FREE",
             "expired": None,

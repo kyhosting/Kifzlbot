@@ -74,44 +74,98 @@ async def handle_member_join(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return
     
     if new_status == ChatMember.MEMBER:
-        text = f"""```
+        # Check if user is in BOTH groups now
+        vip_groups = ["agentviber12", "channelviber"]
+        groups_count = 0
+        
+        for group in vip_groups:
+            try:
+                member = await context.bot.get_chat_member(f"@{group}", user_id)
+                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                    groups_count += 1
+            except:
+                pass
+        
+        # If in BOTH groups, tell user to use /start to verify
+        if groups_count == 2:
+            text = f"""```
+🎉 SELAMAT BERGABUNG!
+
+Halo {user.full_name}! 👋
+Terima kasih sudah join kedua grup kami.
+
+Sekarang gunakan command berikut untuk
+mendapatkan akses VIP gratis 7 hari:
+
+/start
+
+Kemudian klik tombol untuk verifikasi!
+```"""
+            try:
+                await user.send_message(text, parse_mode="Markdown")
+            except:
+                pass
+        else:
+            # Still waiting for user to join second group
+            text = f"""```
 🎉 SELAMAT BERGABUNG!
 
 Halo {user.full_name}! 👋
 Terima kasih sudah join grup kami.
 
-Silakan verifikasi akun Anda untuk
-mendapatkan akses VIP gratis 1 minggu!
+Untuk mendapatkan akses VIP gratis,
+silakan join ke KEDUA grup kami terlebih dahulu:
+
+📌 @agentviber12
+📌 @channelviber
+
+Setelah join kedua grup, gunakan command:
+/start
+
+Maka Anda akan mendapat akses VIP 7 hari!
 ```"""
-        
-        keyboard = [
-            [InlineKeyboardButton("✅ VERIFIKASI SEKARANG", callback_data="verify_user")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        
-        try:
-            await user.send_message(text,
-                parse_mode="Markdown", reply_markup=reply_markup)
-        except:
-            pass
+            try:
+                await user.send_message(text, parse_mode="Markdown")
+            except:
+                pass
     
     elif new_status in [ChatMember.LEFT, ChatMember.KICKED]:
-        update_user_data(user_id, {
-            "role": "FREE",
-            "expired": None,
-            "verified": False
-        })
+        # User left a group - check remaining groups
+        vip_groups = ["agentviber12", "channelviber"]
+        groups_count = 0
         
-        try:
-            text = """```
+        for group in vip_groups:
+            try:
+                member = await context.bot.get_chat_member(f"@{group}", user_id)
+                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                    groups_count += 1
+            except:
+                pass
+        
+        # If not in both groups, revoke access
+        if groups_count < 2:
+            update_user_data(user_id, {
+                "role": "FREE",
+                "expired": None,
+                "verified": False
+            })
+            
+            try:
+                text = """```
 ⚠️ AKSES DICABUT
 
-Anda telah keluar dari grup VIP kami.
-Akses VIP Anda telah dihapus.
+Anda telah keluar dari salah satu grup VIP kami.
+Akses VIP Anda telah dihapus otomatis.
 
-Untuk mendapatkan akses kembali,
-silakan join ulang ke grup kami!
+Untuk mendapatkan akses kembali:
+1. Join ulang ke KEDUA grup kami
+2. Gunakan command /start
+3. Verifikasi akun Anda
+
+Grup VIP:
+📌 @agentviber12
+📌 @channelviber
 ```"""
-            await user.send_message(text, parse_mode="Markdown")
-        except:
-            pass
+                await user.send_message(text, parse_mode="Markdown")
+            except:
+                pass

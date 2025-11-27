@@ -5,28 +5,55 @@ from commands.vip_system import get_user_role, get_user_data, update_user_data, 
 from commands.menu import get_main_menu_keyboard
 
 async def check_and_restore_vip(user_id, bot, context):
-    """Check if user still in VIP groups and restore access if needed"""
+    """Check if user in BOTH VIP groups and grant/revoke access accordingly"""
     vip_groups = ["agentviber12", "channelviber"]
-    is_in_group = False
+    in_both_groups = True
+    groups_count = 0
     
+    # Check if user is in BOTH groups
     for group in vip_groups:
         try:
             member = await bot.get_chat_member(f"@{group}", user_id)
             if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                is_in_group = True
-                break
+                groups_count += 1
         except:
             pass
     
-    if is_in_group:
-        user_data = get_user_data(user_id)
-        if user_data.get("role") == "FREE":
+    user_data = get_user_data(user_id)
+    
+    # If in BOTH groups and currently FREE -> grant VIP access
+    if groups_count == 2 and user_data.get("role") == "FREE":
+        expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+        update_user_data(user_id, {
+            "role": "VIP",
+            "expired": expired_date,
+            "verified": True
+        })
+    
+    # If in BOTH groups and VIP but expired -> restore VIP access
+    elif groups_count == 2 and user_data.get("role") == "VIP":
+        expired = user_data.get("expired")
+        if isinstance(expired, str):
+            try:
+                expired = datetime.strptime(expired, "%Y-%m-%d %H:%M:%S")
+            except:
+                expired = None
+        
+        if not expired or expired <= datetime.now():
             expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
             update_user_data(user_id, {
                 "role": "VIP",
                 "expired": expired_date,
                 "verified": True
             })
+    
+    # If NOT in BOTH groups and has VIP/PREMIUM -> revoke access
+    elif groups_count < 2 and user_data.get("role") in ["VIP", "PREMIUM"]:
+        update_user_data(user_id, {
+            "role": "FREE",
+            "expired": None,
+            "verified": False
+        })
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
