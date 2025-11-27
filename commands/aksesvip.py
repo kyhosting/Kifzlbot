@@ -4,25 +4,26 @@ from telegram.ext import ContextTypes
 async def aksesvip_show(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = """```
 🎟 AKSES VIP GRATIS
-────────────────────
-───────────────────────────────────────
+────────────────────────────────────────
 
-Anda dapat memperoleh akses VIP melalui:
+Pilih salah satu cara untuk mendapatkan
+akses VIP:
 
-• Redeem Code dari Owner  
-• Event Giveaway  
-• Join Grup VIP (1 Minggu Gratis!)
+1️⃣ KODE REDEEM
+   Gunakan kode dari Owner
+
+2️⃣ VERIFIKASI
+   Join grup VIP dan dapatkan akses
+   VIP GRATIS selama 7 hari! ✨
 
 ────────────────────────────────────────
 ```"""
     
     keyboard = [
-        [InlineKeyboardButton("📩 Chat Owner", url="https://t.me/KIFZLDEV")],
         [
-            InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12"),
-            InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")
-        ],
-        [InlineKeyboardButton("🎁 Redeem Code", callback_data="akses_redeem")]
+            InlineKeyboardButton("🎁 Kode Redeem", callback_data="akses_redeem"),
+            InlineKeyboardButton("✅ Verifikasi", callback_data="akses_verify")
+        ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
@@ -30,12 +31,49 @@ Anda dapat memperoleh akses VIP melalui:
 
 async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    if not query:
+        return
     await query.answer()
     
     if query.data == "akses_redeem":
-        from commands.menu import get_main_menu_keyboard
-        from commands.banner_helper import send_with_banner
-        keyboard = get_main_menu_keyboard(update.effective_user.id)
-        await query.message.reply_text("")
-        await query.message.reply_text("```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```",
-                parse_mode="Markdown", reply_markup=keyboard)
+        text = """```
+🎁 REDEEM CODE
+────────────────────────────────────────
+
+Silakan pilih menu:
+🎁 REDEEM CODE
+
+dari menu utama untuk
+memasukkan kode Anda.
+────────────────────────────────────────
+```"""
+        keyboard = [
+            [InlineKeyboardButton("🏠 Kembali", callback_data="akses_back")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.edit_message_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    
+    elif query.data == "akses_verify":
+        text = """```
+✅ VERIFIKASI VIP
+────────────────────────────────────────
+
+Untuk mendapatkan akses VIP selama
+7 hari, silakan:
+
+1. Join grup VIP kami
+2. Klik tombol VERIFIKASI di bawah
+3. Dapatkan akses VIP otomatis!
+
+────────────────────────────────────────
+```"""
+        keyboard = [
+            [InlineKeyboardButton("👥 Join Grup VIP", url="https://t.me/agentviber12")],
+            [InlineKeyboardButton("✅ VERIFIKASI SEKARANG", callback_data="verify_user")],
+            [InlineKeyboardButton("🏠 Kembali", callback_data="akses_back")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.edit_message_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+    
+    elif query.data == "akses_back":
+        await aksesvip_show(update, context)

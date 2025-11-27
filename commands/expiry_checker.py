@@ -22,8 +22,41 @@ async def check_and_notify_expired_users(context: ContextTypes.DEFAULT_TYPE):
                     
                     now = datetime.now()
                     time_diff = (expired_dt - now).total_seconds()
+                    remaining_hours = time_diff / 3600
                     
+                    notified_soon = user_data.get("expiry_notified_soon", False)
                     notified = user_data.get("expiry_notified", False)
+                    
+                    if 0 < time_diff <= 86400 and not notified_soon:
+                        remaining_hours_int = int(remaining_hours)
+                        notification = f"""```
+⏰ PERINGATAN! MASA AKTIF AKAN HABIS SOON!
+
+Akses VIP Anda akan berakhir dalam
+⏳ {remaining_hours_int} jam lagi!
+
+⌛ Tanggal Berakhir: {expired_dt.strftime('%d-%m-%Y %H:%M')}
+
+Untuk melanjutkan akses, segera:
+💎 Beli Premium paket baru
+🎟  Redeem Code gratis dari owner
+✅ Verifikasi kembali untuk perpanjangan
+
+Jangan lewatkan! 🏃
+```"""
+                        
+                        try:
+                            await context.bot.send_message(
+                                chat_id=int(user_id),
+                                text=notification,
+                                parse_mode="Markdown"
+                            )
+                            
+                            users[user_id]["expiry_notified_soon"] = True
+                            with open("users.json", "w") as f:
+                                json.dump(users, f, indent=2)
+                        except Exception as e:
+                            pass
                     
                     if time_diff <= 0 and not notified:
                         notification = f"""```
@@ -37,6 +70,7 @@ Masa aktif VIP/PREMIUM Anda sudah habis!
 Untuk melanjutkan akses, silakan:
 💎 Beli Premium paket baru
 🎟  Redeem Code gratis dari owner
+✅ Verifikasi kembali untuk perpanjangan
 
 Terima kasih telah menggunakan layanan kami! 🙏
 ```"""
@@ -49,6 +83,7 @@ Terima kasih telah menggunakan layanan kami! 🙏
                             )
                             
                             users[user_id]["expiry_notified"] = True
+                            users[user_id]["role"] = "FREE"
                             with open("users.json", "w") as f:
                                 json.dump(users, f, indent=2)
                         except Exception as e:

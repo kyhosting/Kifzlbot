@@ -24,7 +24,9 @@ async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_T
     update_user_data(user_id, {
         "role": "VIP",
         "expired": expired_date,
-        "verified": True
+        "verified": True,
+        "expiry_notified_soon": False,
+        "expiry_notified": False
     })
     
     role = get_user_role(user_id)
@@ -33,9 +35,14 @@ async def handle_verify_callback(update: Update, context: ContextTypes.DEFAULT_T
     text = f"""```
 ✅ VERIFIKASI BERHASIL!
 
+👤 PROFIL
+────────────────────────────────────────
 Nama         : {user.full_name}
 ID           : {user_id}
 Username     : @{user.username if user.username else 'Tidak ada'}
+
+📊 STATUS VIP
+────────────────────────────────────────
 Role         : {role}
 Status       : ✅ AKTIF
 Masa Aktif   : {expired_str}
@@ -45,6 +52,8 @@ Sisa Hari    : 7 hari
 akses VIP GRATIS 7 hari!
 
 Nikmati semua fitur premium bot kami.
+Kami akan mengirim notifikasi sebelum
+masa aktif Anda berakhir.
 ```"""
     
     keyboard = [
