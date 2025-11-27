@@ -34,6 +34,7 @@ async def handle_aksesvip_callback(update: Update, context: ContextTypes.DEFAULT
     
     if query.data == "akses_redeem":
         from commands.menu import get_main_menu_keyboard
+        from commands.banner_helper import send_with_banner
         keyboard = get_main_menu_keyboard(update.effective_user.id)
         await query.message.reply_text("")
         await query.message.reply_text("```\nSilakan pilih 🎁 REDEEM CODE dari menu utama\n```",

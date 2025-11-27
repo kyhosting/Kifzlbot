@@ -4,7 +4,6 @@ import logging
 from telegram import Update
 from telegram.ext import (
     Application,
-    ContextTypes,
     CommandHandler,
     MessageHandler,
     ConversationHandler,
@@ -19,8 +18,6 @@ from commands.start import start_command
 from commands.menu import show_menu, get_main_menu_keyboard
 from commands.status import check_status
 from commands.verify import handle_verify_callback, handle_verify_back, handle_member_join
-from commands.upgradeprem import upgradeprem_show
-from commands.aksesvip import aksesvip_show
 from commands.expiry_checker import check_and_notify_expired_users
 from commands.msg_to_txt import msg_to_txt_start, msg_to_txt_message, msg_to_txt_filename, ASK_MESSAGE as MSG_ASK_MESSAGE, ASK_FILENAME as MSG_ASK_FILENAME
 from commands.rapikan_txt import rapikan_txt_start, rapikan_txt_file, ASK_FILE as RAPIKAN_ASK_FILE
@@ -48,8 +45,7 @@ from commands.upgradeprem import upgradeprem_show, handle_premium_callback
 from commands.aksesvip import aksesvip_show, handle_aksesvip_callback
 from commands.menu_owner import (
     menu_owner_start, menu_owner_action, menu_owner_user_id,
-    menu_owner_role, menu_owner_duration, menu_owner_redeem_code,
-    menu_owner_redeem_mode, menu_owner_redeem_duration, menu_owner_code_expiry, 
+    menu_owner_role, menu_owner_duration, menu_owner_redeem_code, 
     menu_owner_redeem_mode, menu_owner_code_expiry, menu_owner_redeem_duration,
     ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION,
     ASK_REDEEM_CODE, ASK_REDEEM_MODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY
@@ -73,256 +69,14 @@ def ensure_json_files():
                 json.dump({}, f)
             logger.info(f"Created {file}")
 
-async def handle_access_denied_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle inline buttons from access denied message"""
-    query = update.callback_query
-    await query.answer()
-    
-    if query.data == "upgrade_prem":
-        class FakeUpdate:
-            def __init__(self, query):
-                self.message = query.message
-                self.effective_user = query.from_user
-        
-        fake_update = FakeUpdate(query)
-        await upgradeprem_show(fake_update, context)
-    elif query.data == "akses_vip":
-        class FakeUpdate:
-            def __init__(self, query):
-                self.message = query.message
-                self.effective_user = query.from_user
-        
-        fake_update = FakeUpdate(query)
-        await aksesvip_show(fake_update, context)
-    elif query.data == "back_menu":
-        keyboard = get_main_menu_keyboard(query.from_user.id)
-        await query.edit_message_text("```\n🎌 Silakan pilih menu di bawah\n```",
-                    parse_mode="Markdown", reply_markup=keyboard)
-
-async def check_vip_access_wrapper(handler_func, required_role="VIP"):
-    """Create wrapper that checks access before executing handler"""
-    async def wrapper(update: Update, context):
-        user_id = update.effective_user.id
-        if not await vip_system.check_access_with_group_verify(user_id, required_role, context.bot, update):
-            user_role = vip_system.get_user_role(user_id)
-            await vip_system.send_access_denied(update, user_role, required_role)
-            return
-        await handler_func(update, context)
-    return wrapper
-
-async def msg_to_txt_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await msg_to_txt_start(update, context)
-
-async def rapikan_txt_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await rapikan_txt_start(update, context)
-
-async def txt_to_vcf_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await txt_to_vcf_start(update, context)
-
-async def vcf_to_txt_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await vcf_to_txt_start(update, context)
-
-async def xls_to_vcf_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await xls_to_vcf_start(update, context)
-
-async def create_admin_navy_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await create_admin_navy_start(update, context)
-
-async def gabung_file_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await gabung_file_start(update, context)
-
-async def split_file_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await split_file_start(update, context)
-
-async def hitung_kontak_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await hitung_kontak_start(update, context)
-
-async def cek_nama_start_vip(update: Update, context):
-    user_id = update.effective_user.id
-    if not await vip_system.check_access_with_group_verify(user_id, "VIP", context.bot, update):
-        user_role = vip_system.get_user_role(user_id)
-        await vip_system.send_access_denied(update, user_role, "VIP")
-        return
-    await cek_nama_start(update, context)
-
-async def auto_detect_and_upgrade_vip(user_id, bot, update):
-    """Automatically detect if user is in BOTH VIP groups and upgrade to VIP"""
-    from commands.vip_system import ChatMember, get_user_data, update_user_data
-    from datetime import datetime, timedelta
-    
-    vip_groups = ["agentviber12", "channelviber"]
-    groups_count = 0
-    group_info = []
-    
-    # Check if user is in BOTH groups
-    for group in vip_groups:
-        try:
-            member = await bot.get_chat_member(f"@{group}", user_id)
-            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                groups_count += 1
-                group_info.append(f"✅ {group}")
-            else:
-                group_info.append(f"❌ {group}")
-        except Exception as e:
-            group_info.append(f"❌ {group} (error)")
-    
-    user_data = get_user_data(user_id)
-    current_role = user_data.get("role", "FREE")
-    
-    # If in BOTH groups and currently FREE -> grant VIP access
-    if groups_count == 2 and current_role == "FREE":
-        expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
-        update_user_data(user_id, {
-            "role": "VIP",
-            "expired": expired_date,
-            "verified": True
-        })
-        
-        # Send upgrade notification
-        notif_text = """```
-✅ SELAMAT!
-
-Kami detect Anda sudah join KEDUA grup VIP kami:
-""" + "\n".join(group_info) + """
-
-Akses VIP GRATIS 7 hari telah diaktifkan otomatis!
-
-⏰ Durasi: 7 hari
-🎁 Nikmati semua fitur premium sekarang!
-```"""
-        try:
-            await update.message.reply_text(notif_text, parse_mode="Markdown")
-        except Exception as e:
-            print(f"Error sending upgrade notif: {e}")
-        
-        return True
-    
-    # If NOT in BOTH groups and has VIP/PREMIUM -> revoke access
-    if groups_count < 2 and current_role in ["VIP", "PREMIUM"]:
-        update_user_data(user_id, {
-            "role": "FREE",
-            "expired": None,
-            "verified": False
-        })
-        
-        # Send revoke notification
-        revoke_text = """```
-⚠️ AKSES DICABUT
-
-Anda telah keluar dari salah satu grup VIP kami.
-Status grup Anda:
-""" + "\n".join(group_info) + """
-
-Untuk mendapatkan akses kembali:
-1. Join ke KEDUA grup kami
-2. Kirim pesan apapun untuk deteksi otomatis
-```"""
-        try:
-            await update.message.reply_text(revoke_text, parse_mode="Markdown")
-        except Exception as e:
-            print(f"Error sending revoke notif: {e}")
-        
-        return False
-    
-    return False
-
 async def handle_text_messages(update: Update, context):
     text = update.message.text
-    user_id = update.effective_user.id
     await check_and_notify_expired_users(context)
-    
-    # Auto-detect VIP access based on group membership (ALWAYS RUN FIRST)
-    try:
-        await auto_detect_and_upgrade_vip(user_id, context.bot, update)
-    except Exception as e:
-        print(f"Auto-detect error: {e}")
     
     if text in ["menu", "MENU", "Menu", "🔙 MENU 🔙"]:
         await show_menu(update, context)
     elif text == "🜲 STATUS 🜲":
         await check_status(update, context)
-    elif text == "/status_debug":
-        # Debug command for checking group membership
-        user_id = update.effective_user.id
-        from commands.vip_system import ChatMember, get_user_data
-        
-        vip_groups = ["agentviber12", "channelviber"]
-        groups_count = 0
-        group_status = []
-        
-        for group in vip_groups:
-            try:
-                member = await context.bot.get_chat_member(f"@{group}", user_id)
-                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                    groups_count += 1
-                    group_status.append(f"✅ {group}: {member.status}")
-                else:
-                    group_status.append(f"❌ {group}: {member.status}")
-            except Exception as e:
-                group_status.append(f"❌ {group}: ERROR - {str(e)}")
-        
-        user_data = get_user_data(user_id)
-        debug_text = f"""```
-🔧 DEBUG STATUS
-────────────────
-User ID: {user_id}
-Groups Count: {groups_count}/2
-Role: {user_data.get('role', 'N/A')}
-Expired: {user_data.get('expired', 'N/A')}
-Verified: {user_data.get('verified', 'N/A')}
-
-📍 GROUP MEMBERSHIP:
-{chr(10).join(group_status)}
-
-💾 USER DATA:
-{json.dumps(user_data, indent=2)}
-```"""
-        await update.message.reply_text(debug_text, parse_mode="Markdown")
     else:
         keyboard = get_main_menu_keyboard(update.effective_user.id)
         await update.message.reply_text(
@@ -406,7 +160,7 @@ def main():
     application.add_handler(CommandHandler("start", start_command))
     
     msg_to_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 MSG TO TXT 🜲$"), msg_to_txt_start)],
         states={
             MSG_ASK_MESSAGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, msg_to_txt_message)],
             MSG_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, msg_to_txt_filename)],
@@ -415,7 +169,7 @@ def main():
     )
     
     rapikan_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 RAPIKAN TXT 🜲$"), rapikan_txt_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 RAPIKAN TXT 🜲$"), rapikan_txt_start)],
         states={
             RAPIKAN_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, rapikan_txt_file)],
         },
@@ -423,7 +177,7 @@ def main():
     )
     
     txt_to_vcf_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 TXT TO VCF 🜲$"), txt_to_vcf_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 TXT TO VCF 🜲$"), txt_to_vcf_start)],
         states={
             TXT_VCF_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, txt_to_vcf_file)],
             TXT_VCF_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, txt_to_vcf_filename)],
@@ -433,7 +187,7 @@ def main():
     )
     
     vcf_to_txt_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 VCF TO TXT 🜲$"), vcf_to_txt_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 VCF TO TXT 🜲$"), vcf_to_txt_start)],
         states={
             VCF_TXT_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, vcf_to_txt_file)],
         },
@@ -441,7 +195,7 @@ def main():
     )
     
     xls_to_vcf_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 XLS TO VCF 🜲$"), xls_to_vcf_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 XLS TO VCF 🜲$"), xls_to_vcf_start)],
         states={
             XLS_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, xls_to_vcf_file)],
             XLS_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, xls_to_vcf_filename)],
@@ -451,7 +205,7 @@ def main():
     )
     
     hitung_kontak_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 HITUNG KONTAK 🜲$"), hitung_kontak_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 HITUNG KONTAK 🜲$"), hitung_kontak_start)],
         states={
             HITUNG_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, hitung_kontak_file)],
         },
@@ -459,7 +213,7 @@ def main():
     )
     
     cek_nama_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 CEK NAMA 🜲$"), cek_nama_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 CEK NAMA 🜲$"), cek_nama_start)],
         states={
             CEK_NAMA_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, cek_nama_file)],
         },
@@ -467,7 +221,7 @@ def main():
     )
     
     gabung_file_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 GABUNG FILE 🜲$"), gabung_file_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 GABUNG FILE 🜲$"), gabung_file_start)],
         states={
             ASK_FILES: [MessageHandler(filters.Document.ALL | filters.TEXT, gabung_file_collect)],
             GABUNG_ASK_FILENAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, gabung_file_merge)],
@@ -476,7 +230,7 @@ def main():
     )
     
     split_file_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 SPLIT FILE 🜲$"), split_file_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 SPLIT FILE 🜲$"), split_file_start)],
         states={
             SPLIT_ASK_FILE: [MessageHandler(filters.Document.ALL | filters.TEXT, split_file_receive)],
             ASK_OUTPUT_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, split_file_output_name)],
@@ -489,7 +243,7 @@ def main():
     )
     
     create_admin_navy_conv = ConversationHandler(
-        entry_points=[MessageHandler(filters.Regex("^🜲 CREATE ADM/NAVY 🜲$"), create_admin_navy_start_vip)],
+        entry_points=[MessageHandler(filters.Regex("^🜲 CREATE ADM/NAVY 🜲$"), create_admin_navy_start)],
         states={
             ASK_MODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, create_admin_navy_mode)],
             ASK_ADMIN_NUM: [MessageHandler(filters.TEXT & ~filters.COMMAND, create_admin_navy_admin)],
@@ -540,7 +294,6 @@ def main():
     application.add_handler(MessageHandler(filters.Regex("^💎 UPGRADE PREMIUM 💎$"), upgradeprem_show))
     application.add_handler(MessageHandler(filters.Regex("^🎟 AKSES VIP 🎟$"), aksesvip_show))
     
-    application.add_handler(CallbackQueryHandler(handle_access_denied_buttons, pattern="^(upgrade_prem|akses_vip|back_menu)$"))
     application.add_handler(CallbackQueryHandler(handle_premium_callback, pattern="^prem_"))
     application.add_handler(CallbackQueryHandler(handle_aksesvip_callback, pattern="^akses_"))
     application.add_handler(CallbackQueryHandler(handle_verify_callback, pattern="^verify_user$"))

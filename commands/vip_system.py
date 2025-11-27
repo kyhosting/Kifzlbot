@@ -1,15 +1,11 @@
 import json
 import os
-from datetime import datetime, timedelta
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatMember
+from datetime import datetime
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes
 
 OWNER_ID = 8317563450
 VIP_GROUPS = ["https://t.me/agentviber12", "https://t.me/channelviber"]
-VIP_GROUP_IDS = []
-
-def get_vip_group_ids():
-    return VIP_GROUP_IDS or []
 
 def load_users():
     try:
@@ -74,73 +70,13 @@ mendapatkan akses:
 ```"""
     
     keyboard = [
-        [InlineKeyboardButton("💎 UPGRADE PREMIUM 💎", callback_data="upgrade_prem")],
-        [InlineKeyboardButton("🎟 AKSES VIP 🎟", callback_data="akses_vip")],
-        [InlineKeyboardButton("🔙 MENU 🔙", callback_data="back_menu")]
+        [KeyboardButton("💎 UPGRADE PREMIUM 💎")],
+        [KeyboardButton("🎟 AKSES VIP 🎟")],
+        [KeyboardButton("🔙 MENU 🔙")]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
-
-async def send_access_revoked(update: Update):
-    """Send message when VIP access is revoked"""
-    text = """```
-⚠️ AKSES DICABUT
-
-Anda telah keluar dari salah satu grup VIP kami.
-Akses VIP Anda telah dihapus otomatis.
-
-Untuk mendapatkan akses kembali:
-1. Join ke KEDUA grup kami
-2. Gunakan command /start
-```"""
-    
-    keyboard = [
-        [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12"),
-         InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
-        [InlineKeyboardButton("🔙 MENU 🔙", callback_data="back_menu")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
-
-async def check_access_with_group_verify(user_id, required_role, bot, update):
-    """Check access AND verify user is STILL in BOTH VIP groups"""
-    user_role = get_user_role(user_id)
-    
-    if user_role == "OWNER":
-        return True
-    
-    if user_role != "VIP" and user_role != "PREMIUM":
-        return False
-    
-    vip_groups = ["agentviber12", "channelviber"]
-    groups_count = 0
-    
-    # Check if user is in BOTH groups
-    for group in vip_groups:
-        try:
-            member = await bot.get_chat_member(f"@{group}", user_id)
-            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                groups_count += 1
-        except Exception as e:
-            pass
-    
-    # User must be in BOTH groups
-    if groups_count < 2:
-        update_user_data(user_id, {
-            "role": "FREE",
-            "expired": None,
-            "verified": False
-        })
-        await send_access_revoked(update)
-        return False
-    
-    return True
-
-def is_user_in_both_groups(member_status):
-    """Helper to check if member status is valid"""
-    return member_status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]
 
 def get_user_data(user_id):
     users = load_users()
@@ -193,28 +129,3 @@ def clear_session(user_id):
         del sessions[user_str]
         with open("sessions.json", "w") as f:
             json.dump(sessions, f, indent=2)
-
-async def check_user_in_groups(user_id, application):
-    """Check if user is member of VIP groups and auto-grant VIP access"""
-    try:
-        group_ids = ["-1001234567890", "-1001987654321"]
-        for group_id in group_ids:
-            try:
-                member = await application.bot.get_chat_member(group_id, user_id)
-                if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                    grant_vip_7days(user_id)
-                    return True
-            except:
-                pass
-        return False
-    except:
-        return False
-
-def grant_vip_7days(user_id):
-    """Auto-grant VIP access for 7 days"""
-    expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
-    update_user_data(user_id, {
-        "role": "VIP",
-        "expired": expired_date,
-        "auto_verified": True
-    })

@@ -3,7 +3,7 @@ import re
 import vobject
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
-from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data, check_access_with_group_verify
+from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 
 ASK_FILE, ASK_OUTPUT_NAME, ASK_FILE_PREFIX, ASK_CONTACT_PREFIX, ASK_SPLIT_MODE, ASK_SPLIT_VALUE = range(6)
@@ -34,7 +34,9 @@ def rename_contacts_split(contacts, start_index, contact_prefix):
 async def split_file_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
-    if not await check_access_with_group_verify(user_id, "VIP", context.bot, update):
+    if not check_access(user_id, "VIP"):
+        user_role = get_user_role(user_id)
+        await send_access_denied(update, user_role, "VIP")
         return ConversationHandler.END
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)

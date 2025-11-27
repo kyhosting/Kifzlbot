@@ -1,28 +1,11 @@
 import os
-import zipfile
-import xml.etree.ElementTree as ET
+import pandas as pd
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
-from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data, check_access_with_group_verify
+from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 
 ASK_FILE, ASK_FILENAME, ASK_CONTACTNAME = range(3)
-
-def extract_numbers_from_xlsx(filepath):
-    """Extract all numbers from XLSX file using pure Python (no pandas/numpy)"""
-    all_numbers = []
-    try:
-        with zipfile.ZipFile(filepath, 'r') as zip_ref:
-            xml_data = zip_ref.read('xl/worksheets/sheet1.xml')
-            root = ET.fromstring(xml_data)
-            namespace = {'a': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
-            
-            for row in root.findall('.//a:v', namespace):
-                if row.text:
-                    all_numbers.append(row.text)
-    except:
-        pass
-    return all_numbers
 
 def create_vcf_from_excel(phone_numbers, contact_name, filename):
     with open(filename, 'w', encoding='utf-8') as f:
@@ -45,7 +28,9 @@ END:VCARD
 async def xls_to_vcf_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
-    if not await check_access_with_group_verify(user_id, "VIP", context.bot, update):
+    if not check_access(user_id, "VIP"):
+        user_role = get_user_role(user_id)
+        await send_access_denied(update, user_role, "VIP")
         return ConversationHandler.END
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)
@@ -83,7 +68,8 @@ async def xls_to_vcf_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await file.download_to_drive(filepath)
     
     try:
-        all_numbers = extract_numbers_from_xlsx(filepath)
+        df = pd.read_excel(filepath)
+        all_numbers = df.values.flatten().tolist()
         
         phone_numbers = []
         for num in all_numbers:

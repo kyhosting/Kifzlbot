@@ -1,7 +1,7 @@
 import os
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler
-from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data, check_access_with_group_verify
+from commands.vip_system import check_access, send_access_denied, get_user_role, update_user_data, get_user_data
 from commands.menu import get_main_menu_keyboard
 
 ASK_MESSAGE, ASK_FILENAME = range(2)
@@ -9,7 +9,9 @@ ASK_MESSAGE, ASK_FILENAME = range(2)
 async def msg_to_txt_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
-    if not await check_access_with_group_verify(user_id, "VIP", context.bot, update):
+    if not check_access(user_id, "VIP"):
+        user_role = get_user_role(user_id)
+        await send_access_denied(update, user_role, "VIP")
         return ConversationHandler.END
     
     cancel_keyboard = ReplyKeyboardMarkup([[KeyboardButton("❌ BATAL ❌")]], resize_keyboard=True)

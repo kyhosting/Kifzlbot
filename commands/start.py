@@ -1,72 +1,8 @@
-from telegram import Update, ChatMember
+from telegram import Update
 from telegram.ext import ContextTypes
-from datetime import datetime, timedelta
+from datetime import datetime
 from commands.vip_system import get_user_role, get_user_data, update_user_data, OWNER_ID
 from commands.menu import get_main_menu_keyboard
-
-async def check_and_restore_vip(user_id, bot, context):
-    """Check if user in BOTH VIP groups and grant/revoke access accordingly"""
-    vip_groups = ["agentviber12", "channelviber"]
-    groups_count = 0
-    
-    print(f"🔍 [VIP CHECK] User {user_id} - Checking group membership...")
-    
-    # Check if user is in BOTH groups
-    for group in vip_groups:
-        try:
-            member = await bot.get_chat_member(f"@{group}", user_id)
-            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
-                groups_count += 1
-                print(f"  ✅ User {user_id} IS in @{group} ({member.status})")
-            else:
-                print(f"  ❌ User {user_id} NOT in @{group} ({member.status})")
-        except Exception as e:
-            print(f"  ❌ User {user_id} ERROR checking @{group}: {str(e)}")
-    
-    user_data = get_user_data(user_id)
-    current_role = user_data.get("role", "FREE")
-    
-    print(f"📊 [VIP CHECK] Groups found: {groups_count}/2 | Current role: {current_role}")
-    
-    # If in BOTH groups and currently FREE -> grant VIP access
-    if groups_count == 2 and current_role == "FREE":
-        expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
-        update_user_data(user_id, {
-            "role": "VIP",
-            "expired": expired_date,
-            "verified": True
-        })
-        print(f"✅ [VIP GRANTED] User {user_id} upgraded to VIP for 7 days")
-    
-    # If in BOTH groups and VIP but expired -> restore VIP access
-    elif groups_count == 2 and current_role == "VIP":
-        expired = user_data.get("expired")
-        if isinstance(expired, str):
-            try:
-                expired = datetime.strptime(expired, "%Y-%m-%d %H:%M:%S")
-            except:
-                expired = None
-        
-        if not expired or expired <= datetime.now():
-            expired_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
-            update_user_data(user_id, {
-                "role": "VIP",
-                "expired": expired_date,
-                "verified": True
-            })
-            print(f"✅ [VIP RESTORED] User {user_id} VIP access restored")
-    
-    # If NOT in BOTH groups and has VIP/PREMIUM -> revoke access
-    elif groups_count < 2 and current_role in ["VIP", "PREMIUM"]:
-        update_user_data(user_id, {
-            "role": "FREE",
-            "expired": None,
-            "verified": False
-        })
-        print(f"⚠️ [VIP REVOKED] User {user_id} VIP access revoked (left groups)")
-    
-    # Return groups_count so we can show message if needed
-    return groups_count
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -75,8 +11,6 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     username = f"@{user.username}" if user.username else "Tidak ada"
     
     user_data = get_user_data(user_id)
-    old_role = user_data.get("role", "FREE") if user_data else "FREE"
-    
     if not user_data:
         update_user_data(user_id, {
             "name": name,
@@ -87,57 +21,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         })
         user_data = get_user_data(user_id)
     
-    groups_count = await check_and_restore_vip(user_id, context.bot, context)
-    
-    # Reload user data after VIP check
-    user_data = get_user_data(user_id)
-    role = user_data.get("role", "FREE")
-    
-    # If just upgraded to VIP at /start
-    if old_role == "FREE" and role == "VIP":
-        upgrade_text = """```
-✅ SELAMAT!
-
-Kami detect Anda sudah join KEDUA grup VIP kami:
-📌 @agentviber12
-📌 @channelviber
-
-Akses VIP GRATIS 7 hari telah diaktifkan otomatis!
-
-⏰ Durasi: 7 hari
-🎁 Nikmati semua fitur premium sekarang!
-```"""
-        try:
-            await update.message.reply_text(upgrade_text, parse_mode="Markdown")
-        except:
-            pass
-    
-    # Check if user is NOT in both groups - show warning and RETURN
-    if groups_count < 2 and role == "FREE":
-        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-        warning_text = """```
-⚠️ ANDA BELUM BISA MENGGUNAKAN FITUR VIP
-
-Untuk mendapatkan akses VIP GRATIS 7 hari,
-silakan join ke KEDUA grup kami terlebih dahulu.
-
-Setelah join KEDUA grup, gunakan /start lagi
-untuk mendapatkan akses VIP otomatis!
-
-✨ Akses akan diberikan secara otomatis
-setelah join kedua grup.
-```"""
-        keyboard = [
-            [InlineKeyboardButton("👥 Join Grup 1", url="https://t.me/agentviber12"),
-             InlineKeyboardButton("👥 Join Grup 2", url="https://t.me/channelviber")],
-            [InlineKeyboardButton("🏠 Menu Utama", callback_data="back_menu")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        try:
-            await update.message.reply_text(warning_text, parse_mode="Markdown", reply_markup=reply_markup)
-        except:
-            pass
-        return
+    role = get_user_role(user_id)
     
     expired = user_data.get("expired")
     if expired:
