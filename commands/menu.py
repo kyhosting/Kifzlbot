@@ -1,4 +1,4 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from commands.vip_system import get_user_role, OWNER_ID
 
@@ -6,19 +6,24 @@ def get_main_menu_keyboard(user_id):
     is_owner = (user_id == OWNER_ID)
     
     keyboard = [
-        [KeyboardButton("🜲 STATUS 🜲")],
-        [KeyboardButton("🜲 MSG TO TXT 🜲"), KeyboardButton("🜲 TXT TO VCF 🜲")],
-        [KeyboardButton("🜲 VCF TO TXT 🜲"), KeyboardButton("🜲 XLS TO VCF 🜲")],
-        [KeyboardButton("🜲 CREATE ADM/NAVY 🜲")],
-        [KeyboardButton("🜲 RAPIKAN TXT 🜲"), KeyboardButton("🜲 GABUNG FILE 🜲")],
-        [KeyboardButton("🜲 HITUNG KONTAK 🜲"), KeyboardButton("🜲 CEK NAMA 🜲")],
-        [KeyboardButton("🜲 SPLIT FILE 🜲"), KeyboardButton("🎁 REDEEM CODE 🎁")],
+        [InlineKeyboardButton("🜲 STATUS 🜲", callback_data="menu_status")],
+        [InlineKeyboardButton("🜲 MSG TO TXT 🜲", callback_data="menu_msg_to_txt"), 
+         InlineKeyboardButton("🜲 TXT TO VCF 🜲", callback_data="menu_txt_to_vcf")],
+        [InlineKeyboardButton("🜲 VCF TO TXT 🜲", callback_data="menu_vcf_to_txt"),
+         InlineKeyboardButton("🜲 XLS TO VCF 🜲", callback_data="menu_xls_to_vcf")],
+        [InlineKeyboardButton("🜲 CREATE ADM/NAVY 🜲", callback_data="menu_create_admin")],
+        [InlineKeyboardButton("🜲 RAPIKAN TXT 🜲", callback_data="menu_rapikan_txt"),
+         InlineKeyboardButton("🜲 GABUNG FILE 🜲", callback_data="menu_gabung_file")],
+        [InlineKeyboardButton("🜲 HITUNG KONTAK 🜲", callback_data="menu_hitung_kontak"),
+         InlineKeyboardButton("🜲 CEK NAMA 🜲", callback_data="menu_cek_nama")],
+        [InlineKeyboardButton("🜲 SPLIT FILE 🜲", callback_data="menu_split_file"),
+         InlineKeyboardButton("🎁 REDEEM CODE 🎁", callback_data="menu_redeem")],
     ]
     
     if is_owner:
-        keyboard.append([KeyboardButton("🜲 MENU OWNER 🜲")])
+        keyboard.append([InlineKeyboardButton("🜲 MENU OWNER 🜲", callback_data="menu_owner")])
     
-    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    return InlineKeyboardMarkup(keyboard)
 
 async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id

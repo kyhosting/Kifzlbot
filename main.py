@@ -48,7 +48,8 @@ from commands.upgradeprem import upgradeprem_show, handle_premium_callback
 from commands.aksesvip import aksesvip_show, handle_aksesvip_callback
 from commands.menu_owner import (
     menu_owner_start, menu_owner_action, menu_owner_user_id,
-    menu_owner_role, menu_owner_duration, menu_owner_redeem_code, 
+    menu_owner_role, menu_owner_duration, menu_owner_redeem_code,
+    menu_owner_redeem_mode, menu_owner_redeem_duration, menu_owner_code_expiry, 
     menu_owner_redeem_mode, menu_owner_code_expiry, menu_owner_redeem_duration,
     ASK_ACTION, ASK_USER_ID, ASK_ROLE, ASK_DURATION,
     ASK_REDEEM_CODE, ASK_REDEEM_MODE, ASK_REDEEM_DURATION, ASK_CODE_EXPIRY
@@ -72,28 +73,49 @@ def ensure_json_files():
                 json.dump({}, f)
             logger.info(f"Created {file}")
 
+async def handle_menu_buttons(update: Update, context):
+    """Handle all menu inline buttons"""
+    query = update.callback_query
+    await query.answer()
+    
+    callback_map = {
+        "menu_status": check_status,
+        "menu_msg_to_txt": msg_to_txt_start,
+        "menu_txt_to_vcf": txt_to_vcf_start,
+        "menu_vcf_to_txt": vcf_to_txt_start,
+        "menu_xls_to_vcf": xls_to_vcf_start,
+        "menu_create_admin": create_admin_navy_start,
+        "menu_rapikan_txt": rapikan_txt_start,
+        "menu_gabung_file": gabung_file_start,
+        "menu_hitung_kontak": hitung_kontak_start,
+        "menu_cek_nama": cek_nama_start,
+        "menu_split_file": split_file_start,
+        "menu_redeem": redeem_start,
+        "menu_owner": menu_owner_start,
+    }
+    
+    handler = callback_map.get(query.data)
+    if handler:
+        await handler(update, context)
+
 async def handle_access_denied_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle inline buttons from access denied message"""
     query = update.callback_query
     await query.answer()
     
     if query.data == "upgrade_prem":
-        # Create fake update with callback_query for upgradeprem_show
         class FakeUpdate:
             def __init__(self, query):
                 self.message = query.message
                 self.effective_user = query.from_user
-                self.callback_query = query
         
         fake_update = FakeUpdate(query)
         await upgradeprem_show(fake_update, context)
     elif query.data == "akses_vip":
-        # Create fake update with callback_query for aksesvip_show
         class FakeUpdate:
             def __init__(self, query):
                 self.message = query.message
                 self.effective_user = query.from_user
-                self.callback_query = query
         
         fake_update = FakeUpdate(query)
         await aksesvip_show(fake_update, context)
@@ -327,6 +349,7 @@ def main():
     application.add_handler(MessageHandler(filters.Regex("^💎 UPGRADE PREMIUM 💎$"), upgradeprem_show))
     application.add_handler(MessageHandler(filters.Regex("^🎟 AKSES VIP 🎟$"), aksesvip_show))
     
+    application.add_handler(CallbackQueryHandler(handle_menu_buttons, pattern="^menu_"))
     application.add_handler(CallbackQueryHandler(handle_access_denied_buttons, pattern="^(upgrade_prem|akses_vip|back_menu)$"))
     application.add_handler(CallbackQueryHandler(handle_premium_callback, pattern="^prem_"))
     application.add_handler(CallbackQueryHandler(handle_aksesvip_callback, pattern="^akses_"))
