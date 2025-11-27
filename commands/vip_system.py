@@ -82,6 +82,63 @@ mendapatkan akses:
     
     await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
 
+async def send_access_revoked(update: Update):
+    """Send message when VIP access is revoked"""
+    text = """```
+⚠️ AKSES DICABUT
+
+Anda telah keluar dari grup VIP kami.
+Akses VIP Anda telah dihapus otomatis.
+
+Untuk mendapatkan akses kembali:
+1. Join ke salah satu grup kami
+2. Verifikasi akun Anda
+
+Grup VIP:
+📌 @agentviber12
+📌 @channelviber
+```"""
+    
+    keyboard = [
+        [KeyboardButton("👥 Join Grup VIP"), KeyboardButton("🔙 MENU 🔙")]
+    ]
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    
+    await update.message.reply_text(text, parse_mode="Markdown", reply_markup=reply_markup)
+
+async def check_access_with_group_verify(user_id, required_role, bot, update):
+    """Check access AND verify user is still in VIP groups"""
+    user_role = get_user_role(user_id)
+    
+    if user_role == "OWNER":
+        return True
+    
+    if user_role != "VIP" and user_role != "PREMIUM":
+        return False
+    
+    vip_groups = ["agentviber12", "channelviber"]
+    is_in_group = False
+    
+    for group in vip_groups:
+        try:
+            member = await bot.get_chat_member(f"@{group}", user_id)
+            if member.status in [ChatMember.MEMBER, ChatMember.ADMINISTRATOR, ChatMember.CREATOR]:
+                is_in_group = True
+                break
+        except:
+            pass
+    
+    if not is_in_group:
+        update_user_data(user_id, {
+            "role": "FREE",
+            "expired": None,
+            "verified": False
+        })
+        await send_access_revoked(update)
+        return False
+    
+    return True
+
 def get_user_data(user_id):
     users = load_users()
     return users.get(str(user_id), {})
