@@ -87,12 +87,13 @@ async def send_access_revoked(update: Update):
     text = """```
 ⚠️ AKSES DICABUT
 
-Anda telah keluar dari grup VIP kami.
+Anda telah keluar dari salah satu grup VIP kami.
 Akses VIP Anda telah dihapus otomatis.
 
 Untuk mendapatkan akses kembali:
-1. Join ke salah satu grup kami
-2. Verifikasi akun Anda
+1. Join ke KEDUA grup kami
+2. Gunakan command /start
+3. Verifikasi akun Anda
 
 Grup VIP:
 📌 @agentviber12
